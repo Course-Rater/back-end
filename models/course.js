@@ -6,7 +6,8 @@ var CourseSchema = new Schema(
   {
     title: {type: String, required: true, min: 1, max: 120}, 
     school: {type: Schema.Types.ObjectId, ref: 'School', required: true},
-    instructors: [{type: Schema.Types.ObjectId, ref: 'Instructor'}]
+    instructors: [{type: Schema.Types.ObjectId, ref: 'Instructor'}],
+    requirements: [{type: String}]
   }
 );
 
