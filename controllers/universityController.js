@@ -1,4 +1,8 @@
 var University = require('../models/university');
+var Course = require('../models/course');
+var Instructor = require('../models/instructor');
+
+
 const { body,validationResult } = require('express-validator/check');
 const { sanitizeBody } = require('express-validator/filter');
 
