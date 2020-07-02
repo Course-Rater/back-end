@@ -26,7 +26,7 @@ InstructorSchema
   
 
  
-// Virtual for author's URL
+// Virtual for instructor's URL
 InstructorSchema
 .virtual('url')
 .get(function () {

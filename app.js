@@ -6,11 +6,16 @@ var logger = require('morgan');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+var instructorRouter = require('./routes/instructors');
+var universityRouter = require('./routes/courses');
+
+
 
 var app = express();
 
 //Set up mongoose connection
 var mongoose = require('mongoose');
+const university = require('./models/university');
 var mongoDB = 'mongodb+srv://courserater:password2020@cluster0.hzlds.mongodb.net/course_rater?retryWrites=true&w=majority';
 mongoose.connect(mongoDB, { useNewUrlParser: true });
 var db = mongoose.connection;
@@ -28,6 +33,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/universities', universityRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
