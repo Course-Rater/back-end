@@ -32,9 +32,9 @@ exports.course_create_post = function(req, res) {
 };
 
 // Display course delete form on GET.
-exports.course_delete_get = function(req, res) {
-    res.send('NOT IMPLEMENTED: course delete GET');
-};
+// exports.course_delete_get = function(req, res) {
+//     res.send('NOT IMPLEMENTED: course delete GET');
+// };
 
 // Handle course delete on POST.
 exports.course_delete_post = function(req, res) {

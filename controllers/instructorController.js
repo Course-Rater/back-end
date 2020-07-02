@@ -13,25 +13,27 @@ exports.instructor_detail = function(req, res) {
     res.send('NOT IMPLEMENTED: Book detail: ' + req.params.id);
 };
 
-// Display instructor create form on GET.
-exports.instructor_create_get = function(req, res) {
-    res.send('NOT IMPLEMENTED: instructor create GET');
-};
+// // Display instructor create form on GET.
+// exports.instructor_create_get = function(req, res) {
+//     res.send('NOT IMPLEMENTED: instructor create GET');
+// };
 
-// Handle instructor create on POST.
-exports.instructor_create_post = function(req, res) {
-    res.send('NOT IMPLEMENTED: course create POST');
-};
+// // Handle instructor create on POST.
+// exports.instructor_create_post = function(req, res) {
+//     res.send('NOT IMPLEMENTED: course create POST');
+// };
 
-// Display instructor delete form on GET.
-exports.instructor_delete_get = function(req, res) {
-    res.send('NOT IMPLEMENTED: instructor delete GET');
-};
+// instructor will be created in the creating review process
 
-// Handle course delete on POST.
-exports.instructor_delete_post = function(req, res) {
-    res.send('NOT IMPLEMENTED: instructor delete POST');
-};
+// // Display instructor delete form on GET.
+// exports.instructor_delete_get = function(req, res) {
+//     res.send('NOT IMPLEMENTED: instructor delete GET');
+// };
+
+// // Handle course delete on POST.
+// exports.instructor_delete_post = function(req, res) {
+//     res.send('NOT IMPLEMENTED: instructor delete POST');
+// };
 
 // Display course update form on GET.
 exports.instructor_update_get = function(req, res) {
