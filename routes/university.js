@@ -7,7 +7,6 @@ let university_controller = require('../controllers/universityController');
 
 
 // ADDING A NEW REVIEW
-
 router.get('/:university_id/courses/:course_id/rate', course_controller.course_rate_get);
 
 router.post('/:university_id/courses/:course_id/rate', course_controller.course_rate_post);
@@ -60,7 +59,7 @@ router.post('/:university_id/update', university_controller.university_update_po
 router.get('/:university_id/', university_controller.university_detail);
  
 
-// Main page
+// Universities page
 router.get('/', university_controller.university_list);
 
 module.exports = router;
