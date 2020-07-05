@@ -2,7 +2,8 @@ var Course = require('../models/course');
 
 // Display the rating page for a course in a specific university.
 exports.course_rate_get = function(req, res) {
-    res.send('NOT IMPLEMENTED: Course detail: ' + req.params.id);
+    
+    res.send('NOT IMPLEMENTED:' + req.params.id);
 };
 
 // Handle a new rating for a course in a specific university.
