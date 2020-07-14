@@ -1,15 +1,48 @@
 var Instructor = require('../models/instructor');
+<<<<<<< Updated upstream
  
+=======
+var Course = require('../models/course');
+const { body,validationResult } = require('express-validator');
+const { sanitizeBody } = require('express-validator/filter');
+var async = require('async');
+>>>>>>> Stashed changes
 
 // Display list page for instructors in a specific university.
-exports.instructor_list = function(req, res) {
-    res.send('NOT IMPLEMENTED: Course detail: ' + req.params.id);
+exports.instructor_list = function(req, res, next) {
+    Instructor.find()
+      .populate('instructor')
+      .sort([['family_name', 'ascending']])
+      .exec(function (err, list_instructors) {
+        if (err) { return next(err); }
+        //Successful, so render
+        res.render('instructor_list', { title: 'Instructor List', instructor_list: list_instructors });
+      });
 };
 
 
 // Display detail page for a specific instructor.
-exports.instructor_detail = function(req, res) {
-    res.send('NOT IMPLEMENTED: Book detail: ' + req.params.id);
+exports.instructor_detail = function(req, res, next) {
+    async.parallel({
+        instructor: function(callback) {
+            Instructor.findById(req.params.id)
+              .exec(callback)
+        },
+        instructor_courses: function(callback) {
+          Course.find({ 'instructor': req.params.id },'title school')
+          .exec(callback)
+        },
+    }, function(err, results) {
+        if (err) { return next(err); } // Error in API usage.
+        if (results.instructor==null) { // No results.
+            var err = new Error('Instructor not found');
+            err.status = 404;
+            return next(err);
+        }
+        // Successful, so render.
+        res.render('instructor_detail', { title: 'Instructor Detail', instructor: results.instructor,
+         instructor_courses: results.instructor_courses });
+    });
 };
 
 // // Display instructor create form on GET.

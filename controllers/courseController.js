@@ -1,4 +1,5 @@
 var Course = require('../models/course');
+<<<<<<< Updated upstream
 var Review = require('../models/review');
 var Instructor = require('../models/instructor');
 
@@ -9,6 +10,11 @@ const { body, validationResult } = require('express-validator');
 const review = require('../models/review');
 
 
+=======
+var University = require('../models/university');
+var Instructor = require('../models/instructor');
+var async = require('async');
+>>>>>>> Stashed changes
 
 // Display the rating page for a course in a specific university.
 exports.course_rate_get = function(req, res) {
@@ -112,18 +118,58 @@ exports.course_rate_post = [
 ]
 
 // Display list page for courses in a specific university.
-exports.course_list = function(req, res) {
-    res.send('NOT IMPLEMENTED: Course detail: ' + req.params.id);
+exports.course_list = function(req, res, next) {
+    Course.find()
+    .populate('course')
+    .sort([['title', 'ascending']])
+    .exec(function(err, list_courses){
+        if(err){ return next(err); }
+        res.render('course_list', { title: 'Course List', course_list: list_courses });
+    });
 };
 
-// Display detail page for a specific course.
-exports.course_detail = function(req, res) {
-    res.send('NOT IMPLEMENTED: Course detail: ' + req.params.id);
+// Display detail page for a specific course, review property is temporarily excluded 
+exports.course_detail = function(req, res, next) {
+    async.parallel({
+        course: function(callback) {
+
+            Course.findById(req.params.id)
+              .populate('instructor')
+              .populate('unviersity')
+              .exec(callback);
+        },
+        // review: function(callback) {
+
+        //   Review.find({ 'course': req.params.id })
+        //   .exec(callback);
+        // },
+    }, function(err, results) {
+        if (err) { return next(err); }
+        if (results.course==null) { // No results.
+            var err = new Error('Book not found');
+            err.status = 404;
+            return next(err);
+        }
+        // Successful, so render.
+        res.render('course_detail', { title: results.course.title, course: results.course} );
+    });
 };
 
 // Display course create form on GET.
-exports.course_create_get = function(req, res) {
-    res.send('NOT IMPLEMENTED: course create GET');
+exports.course_create_get = function(req, res, next) {
+    // Get all unis and instructors, which we can use for adding to our book.
+    async.parallel({
+        instructors: function(callback) {
+            Instructor.find(callback);
+        },
+        universities: function(callback) {
+            University.find(callback);
+        },
+    }, function(err, results) {
+        if (err) { return next(err); }
+        res.render('course_form', { title: 'Create Course', authors: results.instructors,
+         universities: results.universities});
+    });
 };
 
 // Handle course create on POST.
