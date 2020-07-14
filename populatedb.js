@@ -44,8 +44,8 @@ function instructorCreate(name, school, cb) {
   }  );
 }
 
-function universityCreate(title, cb) {
-  var university = new University({ title: title });
+function universityCreate(title, country, cb) {
+  var university = new University({ title: title, country: country });
        
   university.save(function (err) {
     if (err) {
@@ -108,10 +108,10 @@ function createUniversityInstructors(cb) {
     async.series([
 
         function(callback) {
-            universityCreate('Vanderbilt University', callback);
+            universityCreate('Vanderbilt University', 'USA', callback);
         },
           function(callback) {
-            universityCreate('Jacobs University', callback);
+            universityCreate('Jacobs University', 'Germany', callback);
         },
         function(callback) {
           instructorCreate('Julie Johnson', universities[0], callback);

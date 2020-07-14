@@ -4,13 +4,8 @@ var Schema = mongoose.Schema;
 
 var UniversitySchema = new Schema(
   {
-<<<<<<< Updated upstream
     country: {type: String, required: true, max: 130},
     title: {type: String, required: true, max: 130},  
-=======
-    title: {type: String, required: true, max: 130},
-     
->>>>>>> Stashed changes
   }
 );
 
