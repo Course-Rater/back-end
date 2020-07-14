@@ -16,7 +16,7 @@ var app = express();
 var mongoose = require('mongoose');
 const university = require('./models/university');
 var mongoDB = 'mongodb+srv://courserater:password2020@cluster0.hzlds.mongodb.net/course_rater?retryWrites=true&w=majority';
-mongoose.connect(mongoDB, { useNewUrlParser: true });
+mongoose.connect(mongoDB, {useUnifiedTopology: true, useNewUrlParser: true });
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 

@@ -1,5 +1,14 @@
 var Course = require('../models/course');
+var Review = require('../models/review');
+var Instructor = require('../models/instructor');
+
 var async = require('async');
+const { body, validationResult } = require('express-validator');
+// const { sanitizeBody } = require('express-validator/filter');
+
+const review = require('../models/review');
+
+
 
 // Display the rating page for a course in a specific university.
 exports.course_rate_get = function(req, res) {
@@ -22,10 +31,85 @@ exports.course_rate_get = function(req, res) {
 };
 
 // Handle a new rating for a course in a specific university.
-exports.course_rate_post = function(req, res) {
-    res.send('NOT IMPLEMENTED: Course detail: ' + req.params.id);
-};
+exports.course_rate_post = [
+    // Validate fields.
+    body('quality', 'Quality must be specified and equal to a num').trim().isLength({ min: 1, max: 1 }).isNumeric({no_symbols: true}),
+    body('difficulty', 'Difficulty must be specified and equal to a num').trim().isLength({ min: 1, max: 1 }).isNumeric({no_symbols: true}),
+    body('tags', 'Tags must be specified').trim(),
+    body('comments', 'Comments must be specified').trim().isLength({ min: 1 }),
+    body('instructor', 'Instructor must be specified').trim().isLength({ min: 1 }),
 
+    
+    // Sanitize body.
+    body('*').escape(),
+
+    // Process request after validation
+    (req, res, next) => {
+        // Extract the validation errors from a request.
+        const errors = validationResult(req);
+        
+        if(!errors.isEmpty()){
+            res.send("Tried to send invalid review")
+        }
+        else{ 
+            // Check existence
+            let instructor_id;
+            Instructor.exists({name: req.body.instructor, school: req.params.university_id}, (err, result) => {
+                if(err){
+                    res.send(err);
+                }
+                else{
+                    if(!res){ // if no such instructor
+                        let instructor = new Instructor({ // create document
+                            name: req.body.instructor,
+                            school: req.params.university_id
+                        });
+                        instructor.save((err) => {
+                            if(err){
+                                return next(err);
+                            }
+                        });
+                    }
+                    // find the document
+                    Instructor.findOne({name: req.body.instructor, school: req.params.university_id})
+                    .exec((err, doc)=>{
+                        instructor_id = doc.id; // save instructor_id
+                    })
+                }
+            });
+           
+
+
+            // Add course review
+            let review = new Review({
+                course: req.params.course_id,
+                quality: req.body.quality,
+                difficulty: req.body.difficulty,
+                tags: req.body.tags.split(" "), // not sure about this one
+                comments: req.body.comments,
+                instructor: instructor_id,
+            })
+            
+            Course.findById(req.params.course_id, 'url', (err, doc)=>{
+                // find a course and redirect to its page
+                if(err){
+                    return next(err);
+                }
+
+                review.save((err) => {
+                    if(err){
+                        next(err);
+                    }
+                    res.redirect(doc.url);
+                })
+
+            });
+            
+        }
+
+        
+    }
+]
 
 // Display list page for courses in a specific university.
 exports.course_list = function(req, res) {
