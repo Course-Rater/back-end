@@ -1,16 +1,11 @@
 var University = require('../models/university');
 var Course = require('../models/course');
 var Instructor = require('../models/instructor');
-<<<<<<< Updated upstream
-
- 
-=======
 var async = require('async');
 
 const { body,validationResult } = require('express-validator/check');
 const { sanitizeBody } = require('express-validator/filter');
 
->>>>>>> Stashed changes
 // Display list page for university in a specific university.
 exports.university_list = function(req, res) {
     University.find()

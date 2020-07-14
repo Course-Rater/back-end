@@ -1,12 +1,8 @@
 var Instructor = require('../models/instructor');
-<<<<<<< Updated upstream
- 
-=======
 var Course = require('../models/course');
 const { body,validationResult } = require('express-validator');
 const { sanitizeBody } = require('express-validator/filter');
 var async = require('async');
->>>>>>> Stashed changes
 
 // Display list page for instructors in a specific university.
 exports.instructor_list = function(req, res, next) {

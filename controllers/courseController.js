@@ -1,5 +1,4 @@
 var Course = require('../models/course');
-<<<<<<< Updated upstream
 var Review = require('../models/review');
 var Instructor = require('../models/instructor');
 
@@ -10,11 +9,6 @@ const { body, validationResult } = require('express-validator');
 const review = require('../models/review');
 
 
-=======
-var University = require('../models/university');
-var Instructor = require('../models/instructor');
-var async = require('async');
->>>>>>> Stashed changes
 
 // Display the rating page for a course in a specific university.
 exports.course_rate_get = function(req, res) {
