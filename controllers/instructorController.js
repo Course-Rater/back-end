@@ -1,6 +1,5 @@
 var Instructor = require('../models/instructor');
-const { body,validationResult } = require('express-validator');
-const { sanitizeBody } = require('express-validator/filter');
+ 
 
 // Display list page for instructors in a specific university.
 exports.instructor_list = function(req, res) {

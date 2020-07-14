@@ -1,9 +1,24 @@
 var Course = require('../models/course');
+var async = require('async');
 
 // Display the rating page for a course in a specific university.
 exports.course_rate_get = function(req, res) {
-    
-    res.send('NOT IMPLEMENTED:' + req.params.id);
+
+    // finding course schema using course id
+    Course.findById(req.params.course_id)
+    .populate('school')
+    .exec(function (err, course) {
+      if (err) { return next(err); }
+      if (course==null) { // No results.
+          var err = new Error('Course not found');
+          err.status = 404;
+          return next(err);
+        }
+
+      // Successful, so send course object
+      res.render('courserate', { course:  course});
+    })
+ 
 };
 
 // Handle a new rating for a course in a specific university.

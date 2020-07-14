@@ -2,10 +2,7 @@ var University = require('../models/university');
 var Course = require('../models/course');
 var Instructor = require('../models/instructor');
 
-
-const { body,validationResult } = require('express-validator/check');
-const { sanitizeBody } = require('express-validator/filter');
-
+ 
 // Display list page for university in a specific university.
 exports.university_list = function(req, res) {
     res.send('NOT IMPLEMENTED: University detail: ' + req.params.id);

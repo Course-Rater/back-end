@@ -1,10 +1,10 @@
-var mongoose = require('mongoose');
-var moment = require('moment');
+let mongoose = require('mongoose');
+let moment = require('moment');
 
 
-var Schema = mongoose.Schema;
+let Schema = mongoose.Schema;
 
-var ReviewSchema = new Schema(
+let ReviewSchema = new Schema(
     {
       course: { type: Schema.Types.ObjectId, ref: 'Course', required: true }, //reference to the associated course
       quality: {type: Number, required: true, enum: [1, 2, 3, 4, 5], default: 5},

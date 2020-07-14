@@ -14,6 +14,12 @@ var UniversitySchema = new Schema(
 UniversitySchema
 .virtual('url')
 .get(function () {
+  // name = this.title.toLowerCase();
+  // name.replace(/\s/g, '');
+  // name.replace('university', 'u');
+  // name.replace('of','');
+  // name.replace('of','');
+
   return '/universities/' + this._id;
 });
 
