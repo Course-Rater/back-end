@@ -15,8 +15,7 @@ var app = express();
 
 //Set up mongoose connection
 var mongoose = require('mongoose');
-const bodyParser = require("body-parser");
-app.use(bodyParser.urlencoded({ extended: true }));
+
 const university = require('./models/university');
 var mongoDB = 'mongodb+srv://admin:admin@cluster0.iyp6b.mongodb.net/cluster1?retryWrites=true&w=majority';
 mongoose.connect(mongoDB, { useNewUrlParser: true });

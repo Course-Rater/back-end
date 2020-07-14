@@ -5,7 +5,7 @@ var Schema = mongoose.Schema;
 var InstructorSchema = new Schema(
   {
     name: {type: String, required: true, max: 100},  
-    school: { type: Schema.Types.ObjectId, ref: 'School', required: true }, 
+    school: { type: Schema.Types.ObjectId, ref: 'University', required: true }, 
   }
 );
 
