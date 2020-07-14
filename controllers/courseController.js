@@ -85,7 +85,7 @@ exports.course_rate_post = [
                 course: req.params.course_id,
                 quality: req.body.quality,
                 difficulty: req.body.difficulty,
-                tags: req.body.tags.split(" "), // not sure about this one
+                tags: req.body.tags.split(","), // not sure about this one
                 comments: req.body.comments,
                 instructor: instructor_id,
             })

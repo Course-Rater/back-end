@@ -4,6 +4,7 @@ var Schema = mongoose.Schema;
 
 var UniversitySchema = new Schema(
   {
+    country: {type: String, required: true, max: 130},
     title: {type: String, required: true, max: 130},  
   }
 );
