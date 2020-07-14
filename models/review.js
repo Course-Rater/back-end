@@ -9,11 +9,7 @@ let ReviewSchema = new Schema(
       course: { type: Schema.Types.ObjectId, ref: 'Course', required: true }, //reference to the associated course
       quality: {type: Number, required: true, enum: [1, 2, 3, 4, 5], default: 5},
       difficulty: {type: Number, required: true, enum: [1, 2, 3, 4, 5], default: 5},
-<<<<<<< Updated upstream
       tags: [{type: String, enum: ['Easy A', 'Attendance Required', 'Test Heavy', 'Amazing Lectures', 'Maintenance'], default: 'Maintenance'}],
-=======
-      tags: {type: String, enum: ['Easy A', 'Attendance Required', 'Test Heavy', 'Amazing Lectures', 'Maintenance'], default: 'Maintenance'},
->>>>>>> Stashed changes
       comments: {type: String, min: 1, max: 1000},
       date_added: {type: Date, default: Date.now},
       instructor: {type: Schema.Types.ObjectId, ref: 'Instructor', required: true}

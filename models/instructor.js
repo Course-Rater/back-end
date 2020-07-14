@@ -4,15 +4,8 @@ var Schema = mongoose.Schema;
 
 var InstructorSchema = new Schema(
   {
-<<<<<<< Updated upstream
     name: {type: String, required: true, max: 100},  
     school: { type: Schema.Types.ObjectId, ref: 'School', required: true }, 
-=======
-    first_name: {type: String, required: true, max: 100},
-    family_name: {type: String, required: true, max: 100}, 
-    department: {type: String, required: true, max: 120},
-    school: { type: Schema.Types.ObjectId, ref: 'University', required: true }, 
->>>>>>> Stashed changes
   }
 );
 
