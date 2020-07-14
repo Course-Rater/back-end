@@ -90,7 +90,7 @@ function reviewCreate(course, quality, difficulty, tags, comments, date_added, i
   if (date_added != false) reviewdetail.date_added = date_added
   if (instructor != false) reviewdetail.instructor = instructor
     
-  var review = new Review(review);    
+  var review = new Review(reviewdetail);    
   review.save(function (err) {
     if (err) {
       console.log('ERROR CREATING Review: ' + review);
@@ -99,7 +99,7 @@ function reviewCreate(course, quality, difficulty, tags, comments, date_added, i
     }
     console.log('New Review: ' + review);
     reviews.push(review)
-    cb(null, course)
+    cb(null, review)
   }  );
 }
 
@@ -191,8 +191,7 @@ function createReviews(cb) {
 
 
 async.series([
-    createUniversityInstructors,
-    createCourses,
+   
     createReviews
 ],
 // Optional callback
