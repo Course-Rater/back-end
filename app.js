@@ -15,13 +15,8 @@ var app = express();
 //Set up mongoose connection
 var mongoose = require('mongoose');
 const university = require('./models/university');
-<<<<<<< Updated upstream
-var mongoDB = 'mongodb+srv://courserater:password2020@cluster0.hzlds.mongodb.net/course_rater?retryWrites=true&w=majority';
-mongoose.connect(mongoDB, {useUnifiedTopology: true, useNewUrlParser: true });
-=======
 var mongoDB = 'mongodb+srv://admin:admin@cluster0.iyp6b.mongodb.net/cluster1?retryWrites=true&w=majority';
 mongoose.connect(mongoDB, { useNewUrlParser: true });
->>>>>>> Stashed changes
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 

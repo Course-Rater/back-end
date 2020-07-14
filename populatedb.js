@@ -29,9 +29,8 @@ var universities = []
 var courses = []
 var reviews = []
 
-function instructorCreate(first_name, family_name, department, school, cb) {
-  instructordetail = {first_name:first_name , family_name: family_name, 
-    department: department, school: school }
+function instructorCreate(name, school, cb) {
+  instructordetail = {name: name, school: school }
   var instructor = new Instructor(instructordetail);
        
   instructor.save(function (err) {
@@ -115,19 +114,19 @@ function createUniversityInstructors(cb) {
             universityCreate('Jacobs University', callback);
         },
         function(callback) {
-          instructorCreate('Julie', 'Johnson', 'EECS', universities[0], callback);
+          instructorCreate('Julie Johnson', universities[0], callback);
         },
         function(callback) {
-          instructorCreate('Graham', 'Hemingway', 'EECS', universities[0], callback);
+          instructorCreate('Graham Hemingway', universities[0], callback);
         },
         function(callback) {
-          instructorCreate('Soeren', 'Petrat', 'Math', universities[1], callback);
+          instructorCreate('Soeren Petrat', universities[1], callback);
         },
         function(callback) {
-          instructorCreate('Jurgen', 'Schoenwaelder', 'EECS', universities[1], callback);
+          instructorCreate('Jurgen Schoenwaelder', universities[1], callback);
         },
         function(callback) {
-          instructorCreate('Ivan', 'Penkov', 'Math', universities[1], callback);
+          instructorCreate('Ivan Penkov', universities[1], callback);
         }
         ],
         // optional callback
