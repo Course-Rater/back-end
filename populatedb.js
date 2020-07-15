@@ -191,7 +191,8 @@ function createReviews(cb) {
 
 
 async.series([
-   
+    createUniversityInstructors,
+    createCourses,
     createReviews
 ],
 // Optional callback
