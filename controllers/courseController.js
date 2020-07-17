@@ -137,7 +137,7 @@ exports.course_list = function(req, res) {
     .exec((err, courses) => {
         if (err) { return next(err); }
 
-        res.render('course_list', { title: 'Course List', course_list: courses, university: university });
+        res.render('course_list', { title: 'Course List', course_list: courses });
     
     })
 };
@@ -147,7 +147,7 @@ exports.course_list_all = function(req, res) {
     Course.find({}).populate('instructors').populate('school').sort([['title', 'ascending']])
     .exec((err, courses) => {
         if (err) { return next(err); }
-        res.render('course_list', { title: 'Course List', course_list: courses, university: university });
+        res.render('course_list', { title: 'Course List', course_list: courses });
     
     })
 };

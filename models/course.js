@@ -18,7 +18,7 @@ var CourseSchema = new Schema(
 CourseSchema
 .virtual('url')
 .get(function () {
-    return '/university/' + this.school + '/courses/' + this._id;
+    return '/universities/' + this.school + '/courses/' + this._id;
 }); 
 
 
