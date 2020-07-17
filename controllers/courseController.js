@@ -130,6 +130,7 @@ exports.course_rate_post = [
 ]
 
 // Display list page for courses in a specific university.
+
 exports.course_list = function(req, res) {
     Course.find({}).populate('instructors').populate('school')
     .exec((err, courses) => {
@@ -143,14 +144,48 @@ exports.course_list = function(req, res) {
     })
 };
 
-// Display detail page for a specific course.
-exports.course_detail = function(req, res) {
-    res.send('NOT IMPLEMENTED: Course detail: ' + req.params.id);
+// Display detail page for a specific course, review property is temporarily excluded 
+exports.course_detail = function(req, res, next) {
+    async.parallel({
+        course: function(callback) {
+
+            Course.findById(req.params.id)
+              .populate('instructor')
+              .populate('unviersity')
+              .exec(callback);
+        },
+        // review: function(callback) {
+
+        //   Review.find({ 'course': req.params.id })
+        //   .exec(callback);
+        // },
+    }, function(err, results) {
+        if (err) { return next(err); }
+        if (results.course==null) { // No results.
+            var err = new Error('Book not found');
+            err.status = 404;
+            return next(err);
+        }
+        // Successful, so render.
+        res.render('course_detail', { title: results.course.title, course: results.course} );
+    });
 };
 
 // Display course create form on GET.
-exports.course_create_get = function(req, res) {
-    res.send('NOT IMPLEMENTED: course create GET');
+exports.course_create_get = function(req, res, next) {
+    // Get all unis and instructors, which we can use for adding to our book.
+    async.parallel({
+        instructors: function(callback) {
+            Instructor.find(callback);
+        },
+        universities: function(callback) {
+            University.find(callback);
+        },
+    }, function(err, results) {
+        if (err) { return next(err); }
+        res.render('course_form', { title: 'Create Course', authors: results.instructors,
+         universities: results.universities});
+    });
 };
 
 // Handle course create on POST.

@@ -1,17 +1,46 @@
 var University = require('../models/university');
 var Course = require('../models/course');
 var Instructor = require('../models/instructor');
+var async = require('async');
 
- 
+const { body,validationResult } = require('express-validator/check');
+const { sanitizeBody } = require('express-validator/filter');
+
 // Display list page for university in a specific university.
 exports.university_list = function(req, res) {
-    res.send('NOT IMPLEMENTED: University detail: ' + req.params.id);
+    University.find()
+      .populate('university')
+      .sort([['name', 'ascending']])
+      .exec(function (err, list_universities) {
+        if (err) { return next(err); }
+        //Successful, so render
+        res.render('university_list', { title: 'University List', university_list: list_universities });
+      });
 };
 
 
 // Display detail page for a specific university.
-exports.university_detail = function(req, res) {
-    res.send('NOT IMPLEMENTED: Book detail: ' + req.params.id);
+exports.university_detail = function(req, res, next) {
+    async.parallel({
+        university: function(callback){
+            University.findById(req.params.id)
+            .exec(callback)
+        },
+        university_courses: function(callback){
+            Course.find({'course': req.params.id}, 'title')
+            .exec(callback)
+        }
+
+    },function(err, results){
+        if(err){ return next(err); }
+        if(results.university == null){
+            var err = new Error('University not found');
+            err.status = 404;
+            return next(err);
+        }
+        res.render('university_detail', {title: 'University Detail', university: results.university,
+        university_courses: results.university_courses});
+    });
 };
 
 // Display university create form on GET.

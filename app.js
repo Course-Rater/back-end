@@ -10,19 +10,29 @@ var universityRouter = require('./routes/university');
 
 
 
+
 var app = express();
 
 //Set up mongoose connection
 var mongoose = require('mongoose');
+
 const university = require('./models/university');
 var mongoDB = 'mongodb+srv://admin:admin@cluster0.iyp6b.mongodb.net/cluster1?retryWrites=true&w=majority';
+<<<<<<< HEAD
 mongoose.connect(mongoDB, {useUnifiedTopology: true, useNewUrlParser: true });
+=======
+mongoose.connect(mongoDB, { useNewUrlParser: true });
+>>>>>>> 24f0711b4bb785bba056426794cf9c750f59644c
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
+
+const bodyParser = require("body-parser")
+app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(logger('dev'));
 app.use(express.json());
