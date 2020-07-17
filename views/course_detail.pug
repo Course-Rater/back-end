@@ -6,6 +6,15 @@ block content
 
   p Course Name: #{course.title}
   p School: #{course.school.title}
-  p Instructors: #{course.instructors.name}
+  p Instructors: 
+  each instructor in course.instructors
+    li
+      a(href=instructor.url) #{instructor.name}
   p Requirements: #{course.requirements}
   hr
+  h3 Reviews:
+  -if(review != null){ 
+  each r in review
+    li
+      p #{r.quality} #{r.difficulty}
+  -}
