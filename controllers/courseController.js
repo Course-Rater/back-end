@@ -157,20 +157,17 @@ exports.course_detail = function(req, res, next) {
     async.parallel({
         course: function(callback) {
 
-            Course.findById(req.params.id)
+            Course.findById(req.params.course_id)
               .populate('instructor')
               .populate('unviersity')
               .exec(callback);
         },
-        // review: function(callback) {
-
-        //   Review.find({ 'course': req.params.id })
-        //   .exec(callback);
-        // },
+        
+        
     }, function(err, results) {
         if (err) { return next(err); }
         if (results.course==null) { // No results.
-            var err = new Error('Book not found');
+            var err = new Error('Course not found');
             err.status = 404;
             return next(err);
         }

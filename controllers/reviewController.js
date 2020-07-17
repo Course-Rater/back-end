@@ -21,22 +21,3 @@ exports.review_list = function(req, res) {
     })
 };
 
-// Display detail page for a specific course, review property is temporarily excluded 
-exports.review_detail = function(req, res, next) {
-    async.parallel({
-        review: function(callback) {
-            Review.findById(req.params.id).populate('course').populate('instructor').exec(callback);
-        }
-
-
-    }, function(err, results) {
-        if (err) { return next(err); }
-        if (results.review==null) { // No results.
-            var err = new Error('Book not found');
-            err.status = 404;
-            return next(err);
-        }
-        // Successful, so render.
-        res.render('review_detail', { title: "Review detail", review: results.review} );
-    });
-};
