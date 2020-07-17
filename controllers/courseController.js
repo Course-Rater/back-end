@@ -158,7 +158,7 @@ exports.course_detail = function(req, res, next) {
         course: function(callback) {
 
             Course.findById(req.params.course_id)
-              .populate('instructor')
+              .populate('instructors')
               .populate('school')
               .exec(callback);
         },
@@ -177,8 +177,13 @@ exports.course_detail = function(req, res, next) {
             err.status = 404;
             return next(err);
         }
+        // if (results.review==null) { // No results.
+        //     var err = new Error('Review not found');
+        //     err.status = 404;
+        //     return next(err);
+        // }
         // Successful, so render.
-        res.render('course_detail', { title: results.course.title, course: results.course} );
+        res.render('course_detail', { title: results.course.title, course: results.course, review: results.review} );
     });
 };
 
