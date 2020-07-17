@@ -162,11 +162,8 @@ exports.course_detail = function(req, res, next) {
               .populate('school')
               .exec(callback);
         },
-        // review: function(callback) {
-
-        //   Review.find({ 'course': req.params.id })
-        //   .exec(callback);
-        // },
+        
+        
     }, function(err, results) {
         if (err) { return next(err); }
         if (results.course==null) { // No results.
