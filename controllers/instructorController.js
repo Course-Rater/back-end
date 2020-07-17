@@ -6,9 +6,9 @@ var async = require('async');
 
 // Display list page for instructors in a specific university.
 exports.instructor_list = function(req, res, next) {
-    Instructor.find()
-      .populate('instructor')
-      .sort([['family_name', 'ascending']])
+    Instructor.find({})
+      .populate('school')
+      .sort([['name', 'ascending']])
       .exec(function (err, list_instructors) {
         if (err) { return next(err); }
         //Successful, so render

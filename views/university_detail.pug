@@ -2,8 +2,15 @@ extends layout
 
 block content
   h1= title
-  p= university.title
-  p= university.country
+  p  #{university.title}
+  p Country: #{university.country}
   
+  h3 Courses in this uni
   for course in university_courses
-    li #{course.title}
+    li Title: #{course.title}
+    a(href=course.url) Link
+
+  h3 Instructors in this uni  
+  for instructor in university_instructors
+    li Name: #{instructor.name}
+    a(href=instructor.url) Link
