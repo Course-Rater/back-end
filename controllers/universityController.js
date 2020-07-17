@@ -43,8 +43,6 @@ exports.university_detail = function(req, res, next) {
             return next(err);
         }
 
-        // TODO: Add Courses, professors in this university.
-        Course.findById(req.params.course_id)
 
         res.render('university_detail', {title: 'University Detail', university: results.university,
         university_courses: results.university_courses, university_instructors: results.university_instructors});
