@@ -128,18 +128,27 @@ exports.course_rate_post = [
     }
 ]
 
-// Display list page for courses in a specific university.
 
+
+
+// Display list page for courses in a specific university.
 exports.course_list = function(req, res) {
-    Course.find({}).populate('instructors').populate('school').sort([['title', 'ascending']])
+    Course.find({school: req.params.university_id}).populate('instructors').populate('school').sort([['title', 'ascending']])
     .exec((err, courses) => {
         if (err) { return next(err); }
 
-        University.findById(req.params.university_id)
-        .exec((err, university) => {
-            if (err) { return next(err); }
-            res.render('course_list', { title: 'Course List', course_list: courses, university: university });
-        });
+        res.render('course_list', { title: 'Course List', course_list: courses, university: university });
+    
+    })
+};
+
+// Display Courses in All universities
+exports.course_list_all = function(req, res) {
+    Course.find({}).populate('instructors').populate('school').sort([['title', 'ascending']])
+    .exec((err, courses) => {
+        if (err) { return next(err); }
+        res.render('course_list', { title: 'Course List', course_list: courses, university: university });
+    
     })
 };
 

@@ -6,7 +6,8 @@ block content
   p= course_list[0].title
 
   for course in course_list
-    p #{course.title}
-    p #{course.school}
-    p #{course.instructors.name}
-    p #{course.requirements}
+    p Course Name: #{course.title}
+    p School: #{course.school.title}
+    p Instructor: #{course.instructors.name}
+    p Requirements: #{course.requirements}
+    hr
