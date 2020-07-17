@@ -159,7 +159,7 @@ exports.course_detail = function(req, res, next) {
 
             Course.findById(req.params.course_id)
               .populate('instructor')
-              .populate('unviersity')
+              .populate('school')
               .exec(callback);
         },
         
