@@ -13,10 +13,10 @@ exports.review_list = function(req, res) {
     .exec((err, reviews) => {
         if (err) { return next(err); }
 
-        University.findById(req.params.university_id)
-        .exec((err, university) => {
+        University.findById(req.params.course_id)
+        .exec((err, reviews) => {
             if (err) { return next(err); }
-            res.render('review_list', { title: 'Review List', review_list: reviews, university: university });
+            res.render('course_detail', { title: 'Review List for course', review_list: reviews, university: university});
         });
     })
 };
@@ -24,14 +24,11 @@ exports.review_list = function(req, res) {
 // Display detail page for a specific course, review property is temporarily excluded 
 exports.review_detail = function(req, res, next) {
     async.parallel({
-        course: function(callback) {
+        review: function(callback) {
             Review.findById(req.params.id).populate('course').populate('instructor').exec(callback);
-        },
-        // review: function(callback) {
+        }
 
-        //   Review.find({ 'course': req.params.id })
-        //   .exec(callback);
-        // },
+
     }, function(err, results) {
         if (err) { return next(err); }
         if (results.review==null) { // No results.
