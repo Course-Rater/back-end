@@ -4,3 +4,9 @@ block content
   h1= title
   p= university.title
   p= course_list[0].title
+
+  for course in course_list
+    p #{course.title}
+    p #{course.school}
+    p #{course.instructors.name}
+    p #{course.requirements}

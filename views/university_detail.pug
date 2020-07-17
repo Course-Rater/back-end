@@ -1,0 +1,9 @@
+extends layout
+
+block content
+  h1= title
+  p= university.title
+  p= university.country
+  
+  for course in university_courses
+    li #{course.title}

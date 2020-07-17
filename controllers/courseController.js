@@ -5,7 +5,7 @@ let Instructor = require('../models/instructor');
 let async = require('async');
 
 const { body, validationResult } = require('express-validator');
-// const { sanitizeBody } = require('express-validator/filter');
+// const { sanitizeBody } = require('express-validator');
 
 const review = require('../models/review');
 
@@ -26,7 +26,7 @@ exports.course_rate_get = function(req, res) {
         }
 
       // Successful, so send course object
-      res.render('courserate', { course:  course});
+      res.render('course_rate', { course:  course});
     })
  
 };
@@ -132,7 +132,7 @@ exports.course_rate_post = [
 // Display list page for courses in a specific university.
 
 exports.course_list = function(req, res) {
-    Course.find({}).populate('instructors').populate('school')
+    Course.find({}).populate('instructors').populate('school').sort([['title', 'ascending']])
     .exec((err, courses) => {
         if (err) { return next(err); }
 

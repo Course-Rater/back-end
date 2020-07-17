@@ -3,15 +3,16 @@ var Course = require('../models/course');
 var Instructor = require('../models/instructor');
 var async = require('async');
 
-const { body,validationResult } = require('express-validator/check');
-const { sanitizeBody } = require('express-validator/filter');
+// const { body, validationResult } = require('express-validator');
+// const { sanitizeBody } = require('express-validator');
 
 // Display list page for university in a specific university.
 exports.university_list = function(req, res) {
+
     University.find()
-      .populate('university')
       .sort([['name', 'ascending']])
       .exec(function (err, list_universities) {
+
         if (err) { return next(err); }
         //Successful, so render
         res.render('university_list', { title: 'University List', university_list: list_universities });
@@ -23,11 +24,11 @@ exports.university_list = function(req, res) {
 exports.university_detail = function(req, res, next) {
     async.parallel({
         university: function(callback){
-            University.findById(req.params.id)
+            University.findById(req.params.university_id)
             .exec(callback)
         },
         university_courses: function(callback){
-            Course.find({'course': req.params.id}, 'title')
+            Course.find({'course': req.params.university_id}, 'title')
             .exec(callback)
         }
 
@@ -38,6 +39,9 @@ exports.university_detail = function(req, res, next) {
             err.status = 404;
             return next(err);
         }
+
+        // TODO: Add Courses, professors in this university.
+
         res.render('university_detail', {title: 'University Detail', university: results.university,
         university_courses: results.university_courses});
     });

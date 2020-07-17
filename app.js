@@ -18,11 +18,8 @@ var mongoose = require('mongoose');
 
 const university = require('./models/university');
 var mongoDB = 'mongodb+srv://admin:admin@cluster0.iyp6b.mongodb.net/cluster1?retryWrites=true&w=majority';
-<<<<<<< HEAD
-mongoose.connect(mongoDB, {useUnifiedTopology: true, useNewUrlParser: true });
-=======
-mongoose.connect(mongoDB, { useNewUrlParser: true });
->>>>>>> 24f0711b4bb785bba056426794cf9c750f59644c
+
+mongoose.connect(mongoDB, {useUnifiedTopology: true, useNewUrlParser: true }); 
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 

@@ -1,0 +1,10 @@
+extends layout
+
+block content
+  h1= title 
+
+  ul
+  for uni in university_list
+    li #{uni.title}
+    li #{uni.country}
+    a(href=uni.url) Link
