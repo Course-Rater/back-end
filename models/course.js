@@ -11,6 +11,9 @@ var CourseSchema = new Schema(
   }
 );
 
+
+ 
+
 // Virtual for book's URL
 CourseSchema
 .virtual('url')

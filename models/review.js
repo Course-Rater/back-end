@@ -12,7 +12,9 @@ let ReviewSchema = new Schema(
       tags: [{type: String, enum: ['Easy A', 'Attendance Required', 'Test Heavy', 'Amazing Lectures', 'Maintenance'], default: 'Maintenance'}],
       comments: {type: String, min: 1, max: 1000},
       date_added: {type: Date, default: Date.now},
-      instructor: {type: Schema.Types.ObjectId, ref: 'Instructor', required: true}
+      instructor: {type: Schema.Types.ObjectId, ref: 'Instructor', required: true},
+      likes: {type: Number, default: 0},
+      dislikes: {type: Number, default: 0}
     }
 );
  

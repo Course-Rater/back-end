@@ -1,8 +1,9 @@
-var Course = require('../models/course');
-var Review = require('../models/review');
-var Instructor = require('../models/instructor');
+let Course = require('../models/course');
+let Review = require('../models/review');
+let University = require('../models/university')
+let Instructor = require('../models/instructor');
+let async = require('async');
 
-var async = require('async');
 const { body, validationResult } = require('express-validator');
 // const { sanitizeBody } = require('express-validator/filter');
 
@@ -16,7 +17,7 @@ exports.course_rate_get = function(req, res) {
     // finding course schema using course id
     Course.findById(req.params.course_id)
     .populate('school')
-    .exec(function (err, course) {
+    .exec((err, course) => {
       if (err) { return next(err); }
       if (course==null) { // No results.
           var err = new Error('Course not found');
@@ -52,14 +53,14 @@ exports.course_rate_post = [
             res.send("Tried to send invalid review")
         }
         else{ 
-            // Check existence
+            // Check existence of an instructor
             let instructor_id;
             Instructor.exists({name: req.body.instructor, school: req.params.university_id}, (err, result) => {
                 if(err){
                     res.send(err);
                 }
                 else{
-                    if(!res){ // if no such instructor
+                    if(!result){ // if no such instructor
                         let instructor = new Instructor({ // create document
                             name: req.body.instructor,
                             school: req.params.university_id
@@ -69,17 +70,35 @@ exports.course_rate_post = [
                                 return next(err);
                             }
                         });
+                        
+                        // Add instructor to instructors list in the Course
+                        Course.findById(req.params.course_id).exec((err, doc)=>{
+                            if(err){
+                                console.log("Error: " + err);
+                            }
+                            // push new instructor to the instructors array
+                            doc.instructors.push(instructor._id);
+                            doc.save((err) => {
+                                if(err){
+                                    next(err);
+                                }
+                            });
+                        })
+
                     }
+
                     // find the document
                     Instructor.findOne({name: req.body.instructor, school: req.params.university_id})
                     .exec((err, doc)=>{
                         instructor_id = doc.id; // save instructor_id
                     })
+
+                    
                 }
             });
            
 
-
+        
             // Add course review
             let review = new Review({
                 course: req.params.course_id,
@@ -106,14 +125,22 @@ exports.course_rate_post = [
             });
             
         }
-
         
     }
 ]
 
 // Display list page for courses in a specific university.
 exports.course_list = function(req, res) {
-    res.send('NOT IMPLEMENTED: Course detail: ' + req.params.id);
+    Course.find({}).populate('instructors').populate('school')
+    .exec((err, courses) => {
+        if (err) { return next(err); }
+
+        University.findById(req.params.university_id)
+        .exec((err, university) => {
+            if (err) { return next(err); }
+            res.render('course_list', { title: 'Course List', course_list: courses, university: university });
+        });
+    })
 };
 
 // Display detail page for a specific course.
