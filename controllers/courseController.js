@@ -98,7 +98,6 @@ exports.course_rate_post = [
             });
            
 
-        
             // Add course review
             let review = new Review({
                 course: req.params.course_id,

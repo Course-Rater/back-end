@@ -22,11 +22,12 @@ exports.instructor_detail = function(req, res, next) {
     async.parallel({
         instructor: function(callback) {
             Instructor.findById(req.params.id)
-              .exec(callback)
+            .populate('school')
+            .exec(callback)
         },
         instructor_courses: function(callback) {
-          Course.find({ 'instructor': req.params.id },'title school')
-          .exec(callback)
+            Course.find({ 'instructor': req.params.id },'title school')
+            .exec(callback)
         },
     }, function(err, results) {
         if (err) { return next(err); } // Error in API usage.

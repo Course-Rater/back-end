@@ -1,0 +1,16 @@
+extends layout
+
+block content
+  h1= title 
+  
+
+  h1 Instructor:
+  p Name: #{instructor.name}
+  p School: #{instructor.school.title}
+  
+
+  h1 Courses of this instructor:
+  for course in instructor_courses
+    li #{course.title}
+    li #{course.}
+
