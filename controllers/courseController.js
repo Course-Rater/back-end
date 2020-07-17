@@ -162,6 +162,12 @@ exports.course_detail = function(req, res, next) {
               .populate('school')
               .exec(callback);
         },
+        review: function(callback){
+            Review.findById(req.params.course_id)
+                .populate('course')
+                .populate('instructor')
+                .exec(callback);
+        }
         
         
     }, function(err, results) {
