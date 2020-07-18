@@ -16,5 +16,14 @@ block content
   -if(review != null){ 
   each r in review
     li
-      p #{r.quality} #{r.difficulty}
+      |Quality: #{r.quality} Difficulty: #{r.difficulty}
+      -if(r.comments == null){ r.comments = 'None'}
+      p Comments: #{r.comments} 
+      p Tags:
+      each tag in r.tags
+        li
+          | #{tag}  
+      p Likes: #{r.likes} Dislikes: #{r.dislikes}
+      p Instructor: #{r.instructor.name}
+      hr
   -}

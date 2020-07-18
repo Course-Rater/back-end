@@ -163,7 +163,7 @@ exports.course_detail = function(req, res, next) {
               .exec(callback);
         },
         review: function(callback){
-            Review.findById(req.params.course_id)
+            Review.find({course: req.params.course_id})
                 .populate('course')
                 .populate('instructor')
                 .exec(callback);
@@ -183,6 +183,7 @@ exports.course_detail = function(req, res, next) {
         //     return next(err);
         // }
         // Successful, so render.
+        console.log(results.review);
         res.render('course_detail', { title: results.course.title, course: results.course, review: results.review} );
     });
 };
