@@ -42,7 +42,7 @@ router.post('/:university_id/instructors/:instructor_id/update', instructor_cont
 
 router.get('/:university_id/instructors/:instructor_id', instructor_controller.instructor_detail);
 
-router.get('/:university_id/instructors', instructor_controller.instructor_detail);
+router.get('/:university_id/instructors', instructor_controller.instructor_list);
 
 
 /// UNIVERSITY ROUTES /// 

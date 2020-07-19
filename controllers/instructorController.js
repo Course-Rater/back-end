@@ -21,14 +21,17 @@ exports.instructor_list = function(req, res, next) {
 exports.instructor_detail = function(req, res, next) {
     async.parallel({
         instructor: function(callback) {
-            Instructor.findById(req.params.id)
+            Instructor.findById(req.params.instructor_id)
             .populate('school')
             .exec(callback)
         },
-        instructor_courses: function(callback) {
-            Course.find({ 'instructor': req.params.id },'title school')
+        courses: function(callback){
+            Course.find({instructors: req.params.instructor_id})
+            .populate('course')
             .exec(callback)
-        },
+        }
+
+
     }, function(err, results) {
         if (err) { return next(err); } // Error in API usage.
         if (results.instructor==null) { // No results.
@@ -38,7 +41,7 @@ exports.instructor_detail = function(req, res, next) {
         }
         // Successful, so render.
         res.render('instructor_detail', { title: 'Instructor Detail', instructor: results.instructor,
-         instructor_courses: results.instructor_courses });
+    instructor_courses: results.courses});
     });
 };
 

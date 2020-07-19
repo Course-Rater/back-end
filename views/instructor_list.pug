@@ -6,6 +6,8 @@ block content
 
   h1 List of instructors:
   for instructor in instructor_list
-    p Name: #{instructor.name}
+    | Name: 
+    a(href=instructor.url) #{instructor.name}
     p School: #{instructor.school.title}
+    br
 
