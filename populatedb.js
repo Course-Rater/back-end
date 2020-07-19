@@ -135,7 +135,7 @@ function createUniversityInstructors(cb) {
 
 
 function createCourses(cb) {
-    async.parallel([
+    async.series([
         function(callback) {
           courseCreate('Algorithms', universities[0], [instructors[0], instructors[1],], ['CS Major/Minor Mandatory',],callback);
         },
@@ -158,7 +158,7 @@ function createCourses(cb) {
 
 
 function createReviews(cb) {
-    async.parallel([
+    async.series([
         function(callback) {
           reviewCreate(courses[2], 3, 5, ['Attendance Required',], 'Zaebal with his proofs by isomorphisms. Proof explanations are sometimes confusing',
            false, instructors[4], callback)
