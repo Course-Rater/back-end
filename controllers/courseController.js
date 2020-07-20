@@ -191,7 +191,8 @@ exports.course_detail = function(req, res, next) {
 // Display course create form on GET.
 exports.course_create_get = function(req, res, next) {
     
-     res.render('course_form', { title: 'Create Course'});
+    
+     res.render('course_form', { title: 'Create Course', university: req.params.university_id});
     
 };
 
