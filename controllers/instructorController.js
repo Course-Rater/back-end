@@ -69,10 +69,62 @@ exports.instructor_detail = function(req, res, next) {
 
 // Display course update form on GET.
 exports.instructor_update_get = function(req, res) {
-    res.send('NOT IMPLEMENTED: course update GET');
+    async.parallel({
+        instructor: function(callback){
+            Instructor.findById(req.params.instructor_id).exec(callback);
+        }
+    }, function(err, results){
+        if (err) {return next(err);}
+
+        if (results.instructor==null){
+            var err = new Error('Instructor is not found');
+            err.status = 404;
+            return next(err);
+        }
+
+        res.render('instructor_form', {title: 'Update instructor', instructor: results.instructor}); 
+    });
 };
 
 // Handle instructor update on POST.
 exports.instructor_update_post = function(req, res) {
-    res.send('NOT IMPLEMENTED: instructor update POST');
+
+    // Validate fields.
+    body('name', 'Name should be specified').trim().isLength({ min: 1, max: 150 }).isAlpha({no_symbols: true}),
+    body('school', 'School must be specified').trim(),
+
+    // Sanitize fields.
+    body('*').escape(),
+
+    // Process request after validation and sanitization.
+    (req, res, next) => {
+
+        // Extract the validation errors from a request.
+        const errors = validationResult(req);
+
+        // Create a Book object with escaped/trimmed data and old id.
+        var instructor = new Instructor(
+            {
+            name: req.body.name,
+            school: req.body.school,
+            _id: req.params.instructor_id //This is required, or a new ID will be assigned!
+            });
+
+        if (!errors.isEmpty()) {
+            // There are errors. Render form again with sanitized values/error messages.
+
+            res.render('instructor_form', {title: 'Update instructor', instructor: results.instructor, errors: errors.array()})
+    
+            return;
+        }
+        else {
+            // Data from form is valid. Update the record.
+            Instructor.findByIdAndUpdate(req.params.instructor_id, instructor, {}, (err,theinstructor) => {
+                if (err) { return next(err); }
+                    // Successful - redirect to book detail page.
+                    res.redirect(theinstructor.url);
+                });
+        }
+    }
+
 };
