@@ -126,5 +126,4 @@ exports.instructor_update_post = function(req, res) {
                 });
         }
     }
-
 };
