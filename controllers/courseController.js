@@ -206,8 +206,7 @@ exports.course_create_get = function(req, res, next) {
 };
 
 // // Handle course create on POST.
-exports.course_create_post = [ (req, res, next) =>
-    {
+exports.course_create_post = [ (req, res, next) => {
         res.send('huy');
     }
 

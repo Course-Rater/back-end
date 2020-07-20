@@ -1,0 +1,14 @@
+extends layout
+
+block content
+    h1=title
+
+    form(method='POST' action='')
+        p
+            input(type='text' placeholder='Course name' name='title' required='true' value=(undefined===course ? '' : course.title))
+        p
+            select(type='select' placeholder='Select university' name='university' required='true' )
+        p
+            select(type='select' placeholder='Select instructors' name='instructors' required='true' )
+        p  
+            input(type='text' placeholder='Add requirements and separate with comma')

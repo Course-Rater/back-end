@@ -1,0 +1,16 @@
+extends layout
+
+block content
+    h1=title
+    form(method='POST' action='')
+        p
+            input(type='text' placeholder='University name' name='title' required='true')
+        p  
+            input(type='text' placeholder='Country' name='country' required='true')
+        input(type='submit' value='Create university')
+    
+    -if (errors){
+        ul
+        for error in errors
+            li!= error.msg
+    -}
