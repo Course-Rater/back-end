@@ -1,8 +1,9 @@
-var Instructor = require('../models/instructor');
-var Course = require('../models/course');
+let Instructor = require('../models/instructor');
+let Course = require('../models/course');
+let University = require('../models/university');
 // const { body,validationResult } = require('express-validator');
 // const { sanitizeBody } = require('express-validator');
-var async = require('async');
+let async = require('async');
 
 // Display list page for instructors in a specific university.
 exports.instructor_list = function(req, res, next) {
@@ -68,12 +69,15 @@ exports.instructor_detail = function(req, res, next) {
 // };
 
 // Display course update form on GET.
-exports.instructor_update_get = function(req, res) {
+exports.instructor_update_get = (req, res) => {
     async.parallel({
-        instructor: function(callback){
+        instructor: (callback) => {
             Instructor.findById(req.params.instructor_id).exec(callback);
+        },
+        universities: (callback) => {
+            University.find({}).exec(callback);
         }
-    }, function(err, results){
+    }, (err, results) => {
         if (err) {return next(err);}
 
         if (results.instructor==null){
@@ -82,12 +86,12 @@ exports.instructor_update_get = function(req, res) {
             return next(err);
         }
 
-        res.render('instructor_form', {title: 'Update instructor', instructor: results.instructor}); 
+        res.render('instructor_form', {title: 'Update instructor', instructor: results.instructor, universities: results.universities}); 
     });
 };
 
 // Handle instructor update on POST.
-exports.instructor_update_post = function(req, res) {
+exports.instructor_update_post = (req, res) => {
 
     // Validate fields.
     body('name', 'Name should be specified').trim().isLength({ min: 1, max: 150 }).isAlpha({no_symbols: true}),
@@ -112,8 +116,11 @@ exports.instructor_update_post = function(req, res) {
 
         if (!errors.isEmpty()) {
             // There are errors. Render form again with sanitized values/error messages.
+            University.find({}).exec((err, universities) => {
+                if(err){next(err)}
+                res.render('instructor_form', {title: 'Update instructor', instructor: results.instructor, universities: universities, errors: errors.array()});
 
-            res.render('instructor_form', {title: 'Update instructor', instructor: results.instructor, errors: errors.array()})
+            })
     
             return;
         }

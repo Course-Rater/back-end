@@ -1,0 +1,14 @@
+extends layout
+
+block content
+    h1=title
+
+    form(method='POST' action='')
+        p
+            input(type='text' placeholder='Instructor name' name='title' required='true' value=(undefined===instructor ? '' : instructor.title))
+        p
+            select(type='select' placeholder='Select university' name='university' required='true')
+                for university in universities
+                    option(value=university._id) #{university.title}
+        
+        button.btn.btn-primary(type='submit') Submit
