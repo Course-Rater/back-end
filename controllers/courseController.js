@@ -190,18 +190,9 @@ exports.course_detail = function(req, res, next) {
 
 // Display course create form on GET.
 exports.course_create_get = function(req, res, next) {
-    // Get all unis and instructors, which we can use for adding to our course.
-    async.parallel({
-        instructors: function(callback) {
-            Instructor.find(callback);
-        },
-        universities: function(callback) {
-            University.find(callback);
-        }
-    }, function(err, results) {
-        if (err) { return next(err); }
-        res.render('course_form', { title: 'Create Course'});
-    });
+    
+     res.render('course_form', { title: 'Create Course'});
+    
 };
 
 // // Handle course create on POST.
@@ -210,15 +201,15 @@ exports.course_create_post = [
     //     res.send('huy');}
     
     // Convert the genre to an array
-    (req, res, next) => {
-        if(!(req.body.genre instanceof Array)){
-            if(typeof req.body.genre==='undefined')
-            req.body.genre=[];
-            else
-            req.body.genre=new Array(req.body.genre);
-        }
-        next();
-    },
+    // (req, res, next) => {
+    //     if(!(req.body.genre instanceof Array)){
+    //         if(typeof req.body.genre==='undefined')
+    //         req.body.genre=[];
+    //         else
+    //         req.body.genre=new Array(req.body.genre);
+    //     }
+    //     next();
+    // },
    
     // Validate fields.
     body('title', 'Title must not be empty.').trim().isLength({ min: 1 }),
@@ -238,33 +229,21 @@ exports.course_create_post = [
         // Create a Book object with escaped/trimmed data and old id.
         var course = new Course(
           { title: req.body.title,
-            requirements: requirements_arr
+            requirements: requirements_arr,
+            school: req.params.university_id
            });
 
         if (!errors.isEmpty()) {
-            // There are errors. Render form again with sanitized values/error messages.
-
-            // Get all authors and genres for form.
-            async.parallel({
-                authors: function(callback) {
-                    Author.find(callback);
-                },
-                genres: function(callback) {
-                    Genre.find(callback);
-                },
-            }, function(err, results) {
-                if (err) { return next(err); }
-                
-                res.render('course_form', { title: 'Create Course', errors: errors.array() });
-            });
+            // There are errors. Render form again with sanitized values/error messages            
+           res.render('course_form', { title: 'Create Course', errors: errors.array() });
             return;
         }
         else {
             // Data from form is valid. Update the record.
-            Course.save(req.params.id, course, {}, function (err, thecourse) {
+            course.save(function (err) {
                 if (err) { return next(err); }
                    // Successful - redirect to book detail page.
-                   res.redirect(thecourse.url);
+                   res.redirect(course.url);
                 });
         }
     }

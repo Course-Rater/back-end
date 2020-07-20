@@ -8,6 +8,8 @@ block content
             input(type='text' placeholder='Course name' name='title' required='true' value=(undefined===course ? '' : course.title))
         p  
             input(type='text' name='requirements' placeholder='Add requirements separated with comma')
+        p  
+            input(type='hidden' name='school' value=req.params.university_id)
         input(type='submit') 
 
     -if (errors){
