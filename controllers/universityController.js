@@ -125,10 +125,52 @@ exports.university_delete_post = function(req, res) {
 
 // Display university update form on GET.
 exports.university_update_get = function(req, res) {
-    res.send('NOT IMPLEMENTED: university update GET');
+    res.render('university_form', {title: 'Update university'});
 };
 
 // Handle university update on POST.
-exports.university_update_post = function(req, res) {
-    res.send('NOT IMPLEMENTED: university update POST');
-};
+exports.university_update_post = [
+   
+  // Validate that the name field is not empty.
+  validator.body('title', 'University name required').trim().isLength({ min: 1 }),
+  
+  // Sanitize (escape) the name field.
+  validator.sanitizeBody('title').escape(),
+
+  // Validate that the name field is not empty.
+  validator.body('country', 'Country required').trim().isLength({ min: 1 }),
+  
+  // Sanitize (escape) the name field.
+  validator.sanitizeBody('country').escape(),
+
+  // Process request after validation and sanitization.
+  (req, res, next) => {
+
+    // Extract the validation errors from a request.
+    const errors = validator.validationResult(req);
+
+    // Create a genre object with escaped and trimmed data.
+    var university = new University(
+      { title: req.body.title,
+        country: req.body.country,
+        _id: req.params.university_id }
+    );
+
+
+    if (!errors.isEmpty()) {
+      // There are errors. Render the form again with sanitized values/error messages.
+      res.render('university_form', { title: 'Update University', errors: errors.array()});
+      return;
+    }
+    else {
+      //update university
+      University.findByIdAndUpdate(req.params.university_id, university, {}, (err, theuni) => {
+          if(err){ return next(err); }
+          res.redirect(theuni.url);
+
+      });
+    
+    }
+
+  }
+];

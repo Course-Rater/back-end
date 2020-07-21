@@ -5,7 +5,7 @@ let Instructor = require('../models/instructor');
 let async = require('async');
 
 const { body, validationResult } = require('express-validator');
-// const { sanitizeBody } = require('express-validator');
+const { sanitizeBody } = require('express-validator');
 
 const review = require('../models/review');
 
@@ -213,7 +213,7 @@ exports.course_create_post = [
     // },
    
     // Validate fields.
-    body('title', 'Title must not be empty.').trim().isLength({ min: 1 }),
+    body('title', 'Title must not be empty.').trim().isLength({ min: 1 }).isAlphanumeric({no_symbols: true}),
     body('requirements', 'Title must not be empty.').trim(),
 
     // Sanitize fields.
@@ -225,6 +225,7 @@ exports.course_create_post = [
 
         // Extract the validation errors from a request.
         const errors = validationResult(req);
+        //separate with ,
         let requirements_arr = req.body.requirements.split(',');
 
         // Create a Book object with escaped/trimmed data and old id.
@@ -256,10 +257,11 @@ exports.course_create_post = [
 // };
 
 // Handle course delete on POST.
+//when we delete course we |delete all its ratings/make sure all its ratings are deleted|
 exports.course_delete_post = function(req, res) {
     res.send('NOT IMPLEMENTED: course delete POST');
 };
-
+//when we rate a course, we add new instructor to the course, so course_update
 // Display course update form on GET.
 exports.course_update_get = function(req, res) {
     res.send('NOT IMPLEMENTED: course update GET');
