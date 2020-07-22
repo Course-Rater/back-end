@@ -1,5 +1,19 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{course.title}
+    h1=title
+
+    form(method='POST' action='')
+        p
+            input(type='text' placeholder='Course name' name='title' required='true' value=(undefined===course ? '' : course.title))
+        p  
+            input(type='text' name='requirements' placeholder='Add requirements separated with comma')
+        p  
+            input(type='hidden' name='school' value=req.params.university_id)
+        input(type='submit') 
+
+    -if (errors){
+        ul
+        for error in errors
+            li!= error.msg
+    -}
