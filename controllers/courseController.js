@@ -5,7 +5,7 @@ let Instructor = require('../models/instructor');
 let async = require('async');
 
 const { body, validationResult } = require('express-validator');
-// const { sanitizeBody } = require('express-validator');
+const { sanitizeBody } = require('express-validator');
 
 const review = require('../models/review');
 
@@ -191,99 +191,64 @@ exports.course_detail = function(req, res, next) {
 
 // Display course create form on GET.
 exports.course_create_get = function(req, res, next) {
-    // Get all unis and instructors, which we can use for adding to our course.
-    async.parallel({
-        instructors: function(callback) {
-            Instructor.find(callback);
-        },
-        universities: function(callback) {
-            University.find(callback);
-        },
-    }, function(err, results) {
-        if (err) { return next(err); }
-        res.render('course_form', { title: 'Create Course', authors: results.instructors,
-         universities: results.universities});
-    });
+    
+    res.render('course_form', { title: 'Create Course', university: req.params.university_id});
+    
 };
 
 // // Handle course create on POST.
-exports.course_create_post = [ (req, res, next) => {
-        res.send('huy');
-}
-
-//     // Convert the genre to an array
-//     (req, res, next) => {
-//         if(!(req.body.genre instanceof Array)){
-//             if(typeof req.body.genre==='undefined')
-//             req.body.genre=[];
-//             else
-//             req.body.genre=new Array(req.body.genre);
-//         }
-//         next();
-//     },
+exports.course_create_post = [ 
+    // (req, res, next) => {
+    //     res.send('huy');}
+    
+    // Convert the genre to an array
+    // (req, res, next) => {
+    //     if(!(req.body.genre instanceof Array)){
+    //         if(typeof req.body.genre==='undefined')
+    //         req.body.genre=[];
+    //         else
+    //         req.body.genre=new Array(req.body.genre);
+    //     }
+    //     next();
+    // },
    
-//     // Validate fields.
-//     body('title', 'Title must not be empty.').trim().isLength({ min: 1 }),
-//     body('author', 'Author must not be empty.').trim().isLength({ min: 1 }),
-//     body('summary', 'Summary must not be empty.').trim().isLength({ min: 1 }),
-//     body('isbn', 'ISBN must not be empty').trim().isLength({ min: 1 }),
+    // Validate fields.
+    body('title', 'Title must not be empty.').trim().isLength({ min: 1 }).isAlphanumeric({no_symbols: true}),
+    body('requirements', 'Title must not be empty.').trim(),
 
-//     // Sanitize fields.
-//     sanitizeBody('title').escape(),
-//     sanitizeBody('author').escape(),
-//     sanitizeBody('summary').escape(),
-//     sanitizeBody('isbn').escape(),
-//     sanitizeBody('genre.*').escape(),
+    // Sanitize fields.
+    sanitizeBody('title').escape(),
+    sanitizeBody('requirements').escape(),
+    
+    // Process request after validation and sanitization.
+    (req, res, next) => {
 
-//     // Process request after validation and sanitization.
-//     (req, res, next) => {
+        // Extract the validation errors from a request.
+        const errors = validationResult(req);
+        //separate with ,
+        let requirements_arr = req.body.requirements.split(',');
 
-//         // Extract the validation errors from a request.
-//         const errors = validationResult(req);
+        // Create a Book object with escaped/trimmed data and old id.
+        var course = new Course(
+          { title: req.body.title,
+            requirements: requirements_arr,
+            school: req.params.university_id
+           });
 
-//         // Create a Book object with escaped/trimmed data and old id.
-//         var book = new Book(
-//           { title: req.body.title,
-//             author: req.body.author,
-//             summary: req.body.summary,
-//             isbn: req.body.isbn,
-//             genre: (typeof req.body.genre==='undefined') ? [] : req.body.genre,
-//             _id:req.params.id //This is required, or a new ID will be assigned!
-//            });
-
-//         if (!errors.isEmpty()) {
-//             // There are errors. Render form again with sanitized values/error messages.
-
-//             // Get all authors and genres for form.
-//             async.parallel({
-//                 authors: function(callback) {
-//                     Author.find(callback);
-//                 },
-//                 genres: function(callback) {
-//                     Genre.find(callback);
-//                 },
-//             }, function(err, results) {
-//                 if (err) { return next(err); }
-
-//                 // Mark our selected genres as checked.
-//                 for (let i = 0; i < results.genres.length; i++) {
-//                     if (book.genre.indexOf(results.genres[i]._id) > -1) {
-//                         results.genres[i].checked='true';
-//                     }
-//                 }
-//                 res.render('book_form', { title: 'Update Book',authors: results.authors, genres: results.genres, book: book, errors: errors.array() });
-//             });
-//             return;
-//         }
-//         else {
-//             // Data from form is valid. Update the record.
-//             Book.findByIdAndUpdate(req.params.id, book, {}, function (err,thebook) {
-//                 if (err) { return next(err); }
-//                    // Successful - redirect to book detail page.
-//                    res.redirect(thebook.url);
-//                 });
-//         }
-//     }
+        if (!errors.isEmpty()) {
+            // There are errors. Render form again with sanitized values/error messages            
+           res.render('course_form', { title: 'Create Course', errors: errors.array() });
+            return;
+        }
+        else {
+            // Data from form is valid. Update the record.
+            course.save(function (err) {
+                if (err) { return next(err); }
+                   // Successful - redirect to book detail page.
+                   res.redirect(course.url);
+                });
+        }
+    }
 ];
 
 // Display course delete form on GET.
@@ -292,10 +257,11 @@ exports.course_create_post = [ (req, res, next) => {
 // };
 
 // Handle course delete on POST.
+//when we delete course we |delete all its ratings/make sure all its ratings are deleted|
 exports.course_delete_post = function(req, res) {
     res.send('NOT IMPLEMENTED: course delete POST');
 };
-
+//when we rate a course, we add new instructor to the course, so course_update
 // Display course update form on GET.
 exports.course_update_get = function(req, res) {
     res.send('NOT IMPLEMENTED: course update GET');
