@@ -17,6 +17,7 @@ exports.course_rate_get = function(req, res) {
     // finding course schema using course id
     Course.findById(req.params.course_id)
     .populate('school')
+    .populate('instructors')
     .exec((err, course) => {
       if (err) { return next(err); }
       if (course==null) { // No results.
@@ -26,7 +27,7 @@ exports.course_rate_get = function(req, res) {
         }
 
       // Successful, so send course object
-      res.render('course_rate', { course:  course});
+      res.render('course_rate', { title: "Rate a Course",  course:  course});
     })
  
 };
