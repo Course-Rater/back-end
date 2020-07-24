@@ -52,6 +52,8 @@ router.post('/create', university_controller.university_create_post);
 
 router.post('/:university_id/delete', university_controller.university_delete_post);
 
+router.get('/:university_id/delete', university_controller.university_delete_get);
+
 router.get('/:university_id/update', university_controller.university_update_get);
 
 router.post('/:university_id/update', university_controller.university_update_post);

@@ -114,13 +114,44 @@ exports.university_create_post = [
   ];
 
 // Display university delete form on GET.
-exports.university_delete_get = function(req, res) {
-    res.send('NOT IMPLEMENTED: university delete GET');
+exports.university_delete_get = function(req, res, next) {
+  async.parallel({
+    university: function(callback){
+      University.findById(req.params.university_id)
+      .exec(callback)
+    },
+    instructors: function(callback) {
+      Instructor.find({'school': req.params.university_id})
+      .exec(callback)
+    },
+    courses: function(callback){
+      Course.find({'course': req.params.university_id})
+      .exec(callback)
+    }
+  },function(err, results){
+    if(err) { return next(err); }
+    if(results.courses.length){
+      var err = new Error('Unable to delete. University has courses');
+      err.status = 500;
+      return next(err);
+    }
+    if(results.instructors.length){
+      var err = new Error('Unable to delete. University has instructors');
+      err.status = 500;
+      return next(err);
+    }
+    res.render('university_delete_form', { title: "Delete University", university: results.university });
+      
+  });
+  //res.send('NOT IMPLEMENTED: university delete GET');
 };
 
 // Handle university delete on POST.
-exports.university_delete_post = function(req, res) {
-    res.send('NOT IMPLEMENTED: university delete POST');
+exports.university_delete_post = function(req, res, next) {
+    University.findByIdAndRemove(req.params.university_id, (err) => {
+      if(err){ return next(err); }
+      res.redirect('/universities');
+    })
 };
 
 // Display university update form on GET.
