@@ -9,37 +9,42 @@ block content
         for instructor in course.instructors
             li=instructor.name
 
-    form(method='POST' action='/')
-
-
+    form(method='POST' action='')
+        h3 Quality
         p   
-            select#(name="quality")
-                option(value="1")
-                option(value="2")
-                option(value="3")
-                option(value="4")
-                option(value="5")
-
+            select(name="quality")
+                option(value="1") 1
+                option(value="2") 2 
+                option(value="3") 3
+                option(value="4") 4
+                option(value="5") 5
+        h3 Difficulty
         p   
-            select#(name="difficulty")
-                option(value="1")
-                option(value="2")
-                option(value="3")
-                option(value="4")
-                option(value="5")      
+            select(name="difficulty")
+                option(value="1") 1
+                option(value="2") 2
+                option(value="3") 3
+                option(value="4") 4
+                option(value="5") 5
 
+        h3 Tags
         p   
-            select#(name="tags")
-                option(value="tag1")
-                option(value="tag2")
-                option(value="tag3")
-                option(value="tag4")
-                option(value="tag5")      
-
-        p
-            input(type='text' placeholder='What did you think of the course?' name='comments' required='true' ))
+            select(name="tags")
+                option(value="tag1") Easy A
+                option(value="tag2") Easy B
+                option(value="tag3") Easy С
+                option(value="tag4") Easy D
+                option(value="tag5") Easy E
+        h3 What did u think of the course?
+        p   
+            textarea(placeholder='What did you think of the course?' name='comments' required='true' )
         
-        p  
+        h3 Who taught this course?
+        p
+            input(type='text' name='instructor')
+
+
+        p  Choose among them:
             for instructor in course.instructors
                 li=instructor.name
 
