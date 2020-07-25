@@ -4,10 +4,8 @@ block content
     h1=title
 
     h2=course.title
-    h4 Current instructors:
-    ul
-        for instructor in course.instructors
-            li=instructor.name
+
+    hr
 
     form(method='POST' action='')
         h3 Quality
@@ -27,21 +25,28 @@ block content
                 option(value="4") 4
                 option(value="5") 5
 
-        h3 Tags
-        p   
-            select(name="tags")
-                option(value="tag1") Easy A
-                option(value="tag2") Easy B
-                option(value="tag3") Easy С
-                option(value="tag4") Easy D
-                option(value="tag5") Easy E
+        h3 Tags 
+    
+        div(style='display: inline; padding-right:10px;')
+            input.checkbox-input(type='checkbox', name='tags', value="Attendance Required", id="attendance")
+            label(for="attendance") Attendance Required  
+
+            input.checkbox-input(type='checkbox', name='tags', value="Easy A", id="easy")
+            label(for="easy") Easy A 
+
+            input.checkbox-input(type='checkbox', name='tags', value="Test Heavy", id="test")
+            label(for="test") Test Heavy
+
+            input.checkbox-input(type='checkbox', name='tags', value="Amazing Lectures", id="amazing")
+            label(for="amazing") Amazing Lectures 
+
         h3 What did u think of the course?
         p   
             textarea(placeholder='What did you think of the course?' name='comments' required='true' )
         
         h3 Who taught this course?
         p
-            input(type='text' name='instructor')
+            input(type='text' name='instructor' required="true")
 
 
         p  Choose among them:
@@ -51,8 +56,8 @@ block content
         input(type='submit') 
             
 
-    -if (errors){
+    if errors
         ul
         for error in errors
             li!= error.msg
-    -}
+    

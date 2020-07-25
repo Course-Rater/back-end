@@ -4,8 +4,7 @@ let University = require('../models/university')
 let Instructor = require('../models/instructor');
 let async = require('async');
 
-const { body, validationResult } = require('express-validator');
-const { sanitizeBody } = require('express-validator');
+const { body, validationResult } = require('express-validator'); 
 
 const review = require('../models/review');
 
@@ -37,97 +36,129 @@ exports.course_rate_post = [
     // Validate fields.
     body('quality', 'Quality must be specified and equal to a num').trim().isLength({ min: 1, max: 1 }).isNumeric({no_symbols: true}),
     body('difficulty', 'Difficulty must be specified and equal to a num').trim().isLength({ min: 1, max: 1 }).isNumeric({no_symbols: true}),
-    body('tags', 'Tags must be specified').trim(),
-    body('comments', 'Comments must be specified').trim().isLength({ min: 1 }),
-    body('instructor', 'Instructor must be specified').trim().isLength({ min: 1 }),
+    // body('tags', 'Tags must be specified').trim(),
+    // body('comments', 'Comments must be specified').trim(),
+    // body('instructor', 'Instructor must be specified').trim().isLength({ min: 1 }),
 
-    
     // Sanitize body.
     body('*').escape(),
+
+
+    // Convert the tags to an array
+    (req, res, next) => {
+        if(!(req.body.tags instanceof Array)){
+            if(typeof req.body.tags==='undefined')
+            req.body.tags=[];
+            else
+            req.body.tags= new Array(req.body.tags); 
+        }
+        next();
+    },
+   
 
     // Process request after validation
     (req, res, next) => {
         // Extract the validation errors from a request.
         const errors = validationResult(req);
-        
+       
+
         if(!errors.isEmpty()){
             res.send("Tried to send invalid review")
-        }
-        else{ 
-            // Check existence of an instructor
-            let instructor_id;
-            Instructor.exists({name: req.body.instructor, school: req.params.university_id}, (err, result) => {
-                if(err){
-                    res.send(err);
-                }
-                else{
-                    if(!result){ // if no such instructor
-                        let instructor = new Instructor({ // create document
-                            name: req.body.instructor,
-                            school: req.params.university_id
-                        });
-                        instructor.save((err) => {
+        }  
+ 
+
+        Instructor.exists({name: req.body.instructor, school: req.params.university_id}, (err, result) => {
+            if(err){
+                res.send("Error in checking if instructor exists: " + err);
+                return next(err);
+            }
+
+            console.log("Finding instructor: " + result);
+
+            // TODO: do I even check emptiness like this?
+            if(!result){ // if no such instructor
+                let instructor = new Instructor({ // create document
+                    name: req.body.instructor,
+                    school: req.params.university_id
+                });
+
+                console.log("Instructor created but not saved")
+
+                instructor.save((err) => {
+                    if(err){
+                        return next(err);
+                    }
+
+                    // Add instructor to instructors list in the Course
+                    Course.findById(req.params.course_id).exec((err, doc)=>{
+                        if(err){
+                            console.log("Error: " + err);
+                        }
+
+
+                        console.log("Instructor object: " +  instructor);
+                        console.log(instructor._id);
+
+
+                        // push new instructor to the instructors array
+                        doc.instructors.push(instructor._id);
+                        doc.save((err) => {
                             if(err){
-                                return next(err);
+                                next(err);
                             }
                         });
-                        
-                        // Add instructor to instructors list in the Course
-                        Course.findById(req.params.course_id).exec((err, doc)=>{
+                    })
+                }).then(doAfterAddingProf);
+                
+            }
+            else{
+                doAfterAddingProf();
+            }
+            
+            let doAfterAddingProf = () =>{
+                // find the document
+                Instructor.findOne({name: req.body.instructor, school: req.params.university_id})
+                .exec((err, doc)=>{
+                    if(err){next(err);}
+                    
+                    console.log("Review here:")
+            
+        
+                    // Add course review
+                    let review = new Review({
+                        course: req.params.course_id,
+                        quality: req.body.quality,
+                        difficulty: req.body.difficulty,
+                        tags: req.body.tags, // not sure about this one
+                        comments: req.body.comments,
+                        instructor: doc._id,
+                    })
+                    
+                    Course.findById(req.params.course_id, 'url', (err, doc)=>{
+                        // find a course and redirect to its page
+                        if(err){
+                            return next(err);
+                        }
+
+                        review.save((err) => {
                             if(err){
-                                console.log("Error: " + err);
+                                next(err);
                             }
-                            // push new instructor to the instructors array
-                            doc.instructors.push(instructor._id);
-                            doc.save((err) => {
-                                if(err){
-                                    next(err);
-                                }
-                            });
+                            res.redirect(doc.url);
                         })
 
-                    }
+                    });
 
-                    // find the document
-                    Instructor.findOne({name: req.body.instructor, school: req.params.university_id})
-                    .exec((err, doc)=>{
-                        if(err){next(err);}
-                        instructor_id = doc.id; // save instructor_id
-                    })
-
-                    
-                }
-            });
-           
-
-            // Add course review
-            let review = new Review({
-                course: req.params.course_id,
-                quality: req.body.quality,
-                difficulty: req.body.difficulty,
-                tags: req.body.tags.split(","), // not sure about this one
-                comments: req.body.comments,
-                instructor: instructor_id,
-            })
+                });
+            }
             
-            Course.findById(req.params.course_id, 'url', (err, doc)=>{
-                // find a course and redirect to its page
-                if(err){
-                    return next(err);
-                }
 
-                review.save((err) => {
-                    if(err){
-                        next(err);
-                    }
-                    res.redirect(doc.url);
-                })
-
-            });
+        });
+        
+        
             
         }
         
-    }
 ]
 
 
@@ -164,7 +195,7 @@ exports.course_detail = function(req, res, next) {
               .populate('school')
               .exec(callback);
         },
-        review: function(callback){
+        reviews: function(callback){
             Review.find({course: req.params.course_id})
                 .populate('course')
                 .populate('instructor')
@@ -186,7 +217,7 @@ exports.course_detail = function(req, res, next) {
         // }
         // Successful, so render.
         console.log(results.review);
-        res.render('course_detail', { title: results.course.title, course: results.course, review: results.review} );
+        res.render('course_detail', { title: 'Course Detail', course: results.course, reviews: results.reviews} );
     });
 };
 
@@ -208,7 +239,7 @@ exports.course_create_post = [
     //         if(typeof req.body.genre==='undefined')
     //         req.body.genre=[];
     //         else
-    //         req.body.genre=new Array(req.body.genre);
+    //         req.body.genre=new Array(req.body.genre); 
     //     }
     //     next();
     // },
@@ -218,8 +249,8 @@ exports.course_create_post = [
     body('requirements', 'Title must not be empty.').trim(),
 
     // Sanitize fields.
-    sanitizeBody('title').escape(),
-    sanitizeBody('requirements').escape(),
+    body('title').escape(),
+    body('requirements').escape(),
     
     // Process request after validation and sanitization.
     (req, res, next) => {

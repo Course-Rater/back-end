@@ -28,7 +28,7 @@ var InstructorSchema = new Schema(
 InstructorSchema
 .virtual('url')
 .get(function () {
-  return '/universities/' + this.school + "/instructors/" + this._id;
+  return '/universities/' + this.school._id + "/instructors/" + this._id;
 });
 
 //Export model

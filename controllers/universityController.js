@@ -3,8 +3,8 @@ var Course = require('../models/course');
 var Instructor = require('../models/instructor');
 var async = require('async');
 
- const validator = require('express-validator');
- const { sanitizeBody } = require('express-validator');
+const validator = require('express-validator');
+const { sanitizeBody } = require('express-validator');
 
 // Display list page for university in a specific university.
 exports.university_list = function(req, res) {

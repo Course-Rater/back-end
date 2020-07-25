@@ -11,7 +11,7 @@ block content
 
   h1 Courses of this instructor:
   for course in instructor_courses
-    li #{course.title}
-    li #{course.requirements}
-    br
+    h3 #{course.title}
+    li Requirements: #{course.requirements}
+    hr
 
