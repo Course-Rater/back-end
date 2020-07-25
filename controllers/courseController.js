@@ -6,8 +6,6 @@ let async = require('async');
 
 const { body, validationResult } = require('express-validator'); 
 
-const review = require('../models/review');
-
 
 
 // Display the rating page for a course in a specific university.
