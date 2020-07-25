@@ -19,6 +19,8 @@ router.post('/:university_id/courses/create', course_controller.course_create_po
 
 router.post('/:university_id/courses/:course_id/delete', course_controller.course_delete_post);
 
+router.get('/:university_id/courses/:course_id/delete', course_controller.course_delete_get);
+
 router.get('/:university_id/courses/:course_id/update', course_controller.course_update_get);
 
 router.post('/:university_id/courses/:course_id/update', course_controller.course_update_post);

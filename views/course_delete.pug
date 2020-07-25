@@ -3,17 +3,9 @@ extends layout
 block content
   h1= title 
 
-  p Course Name: #{course.title}
-  p School: #{course.school.title}
-  p Instructors: 
-  each instructor in course.instructors
-    li
-      a(href=instructor.url) #{instructor.name}
-  p Requirements: #{course.requirements}
-  hr
-  
-  h3 Reviews:
-  if reviews 
+ 
+  if (reviews.length > 0)
+    h3 Delete the following reviews, before trying to delete the course
     each review in reviews
       |Quality: #{review.quality} Difficulty: #{review.difficulty}
 
@@ -32,7 +24,7 @@ block content
       p Instructor: #{review.instructor.name}
 
       hr
-  a(href=course.url + '/rate') Rate the course  
-  a(href=course.url + '/delete') Delete the course  
-
-     
+  else
+    form(action="" method="post")
+        input(type="hidden" name='cid' value=course._id)
+        input(type='submit' value="Confirm deletion")   

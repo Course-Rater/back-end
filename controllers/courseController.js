@@ -5,6 +5,7 @@ let Instructor = require('../models/instructor');
 let async = require('async');
 
 const { body, validationResult } = require('express-validator'); 
+const course = require('../models/course');
 
 
 
@@ -290,14 +291,59 @@ exports.course_create_post = [
 ];
 
 // Display course delete form on GET.
-// exports.course_delete_get = function(req, res) {
-//     res.send('NOT IMPLEMENTED: course delete GET');
-// };
+exports.course_delete_get = function(req, res) {
+    async.parallel({
+        reviews: function(callback){
+            Review.find({course: req.params.course_id})
+            .populate('instructor')
+            .populate('course')
+            .exec(callback);
+        },
+        course: function(callback){
+            Course.findById(req.params.course_id)
+            .exec(callback);
+        }
+
+    }, function(err, results){
+        if(err){ next(err); }
+        res.render('course_delete', { title: 'Delete Course', course: results.course, reviews: results.reviews} );
+    });
+};
 
 // Handle course delete on POST.
 //when we delete course we |delete all its ratings/make sure all its ratings are deleted|
-exports.course_delete_post = function(req, res) {
-    res.send('NOT IMPLEMENTED: course delete POST');
+exports.course_delete_post = function(req, res, next) {
+    async.parallel({
+        reviews: function(callback){
+            Review.find({course: req.body.cid})
+            .populate('instructor')
+            .populate('course')
+            .exec(callback);
+        },
+        course: function(callback){
+            Course.findById(req.body.cid)
+            .populate('instructors')
+            .populate('school')
+            .exec(callback);
+        },
+        university: function(callback){
+            University.findById(req.params.university_id)
+            .exec(callback);
+        }
+
+    }, function(err, results){
+        if(err){ next(err); }
+        if(results.reviews.length){
+            res.render('course_delete', { title: 'Delete Course', course: results.course, reviews: results.reviews} );
+        }
+        else{
+            Course.findByIdAndRemove(req.body.cid)
+            .exec(err => {
+                if(err){ return next(err);}
+                res.redirect(results.university.url)
+            });
+        }
+    });
 };
 //when we rate a course, we add new instructor to the course, so course_update
 // Display course update form on GET.
