@@ -7,9 +7,19 @@ block content
         p
             input(type='text' placeholder='Course name' name='title' required='true' value=(undefined===course ? '' : course.title))
         p  
-            input(type='text' name='requirements' placeholder='Add requirements separated with comma')
+           //input(type='text' name='requirements' placeholder='Add requirements separated with comma' value=(undefined===course ? '' : course.requirements))
+           -if(course.requirements.length > 0){
+                ul
+                for req in course.requirements
+                    li
+                    input(type='text' value=req)   
+           -}
         p  
-            input(type='hidden' name='school' value=university)
+            -if(course===undefined){
+                input(type='hidden' name='school' value=university)
+            -}else{
+                input(type='text' name='school' value=university.title)
+            -}
         input(type='submit') 
 
     -if (errors){
