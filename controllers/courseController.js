@@ -44,11 +44,12 @@ exports.course_rate_post = [
 
     // Convert the tags to an array
     (req, res, next) => {
-        if(!(req.body.tags instanceof Array)){
+        
+        if(!Array.isArray(req.body.tags)){
             if(typeof req.body.tags==='undefined')
             req.body.tags=[];
             else
-            req.body.tags= new Array(req.body.tags); 
+            req.body.tags = [req.body.tags]; 
         }
         next();
     },
@@ -57,7 +58,7 @@ exports.course_rate_post = [
     // Process request after validation
     (req, res, next) => {
 
-        let doAfterAddingProf = () =>{
+        let doAfterAddingProf = () => {
             // find the document
             Instructor.findOne({name: req.body.instructor, school: req.params.university_id})
             .exec((err, doc)=>{
@@ -83,12 +84,13 @@ exports.course_rate_post = [
                     if(err){
                         return next(err);
                     }
+                    course.populate('school');
 
                     review.save((err) => {
                         if(err){
                             next(err);
                         }
-                        res.send(course);
+                        res.redirect(course.url);
                     })
 
                 });
@@ -156,9 +158,6 @@ exports.course_rate_post = [
             else{
                 doAfterAddingProf();
             }
-
-
-            
 
         });
         
