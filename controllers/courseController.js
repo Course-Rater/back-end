@@ -58,6 +58,49 @@ exports.course_rate_post = [
 
     // Process request after validation
     (req, res, next) => {
+
+        let doAfterAddingProf = () =>{
+            // find the document
+            Instructor.findOne({name: req.body.instructor, school: req.params.university_id})
+            .exec((err, doc)=>{
+                if(err){next(err);}
+                
+                console.log("Review started, instructor doc: "  + doc);
+                console.log(doc._id);
+        
+                
+                // Add course review
+                let review = new Review({
+                    course: req.params.course_id,
+                    quality: req.body.quality,
+                    difficulty: req.body.difficulty,
+                    tags: req.body.tags, 
+                    comments: req.body.comments,
+                    instructor: doc._id,
+                })
+                
+                Course.findById(req.params.course_id, (err, course)=>{
+
+                    // find a course and redirect to its page
+                    if(err){
+                        return next(err);
+                    }
+
+                    review.save((err) => {
+                        if(err){
+                            next(err);
+                        }
+                        res.send(course);
+                    })
+
+                });
+
+            });
+        }
+
+
+
+
         // Extract the validation errors from a request.
         const errors = validationResult(req);
        
@@ -106,51 +149,17 @@ exports.course_rate_post = [
                             if(err){
                                 next(err);
                             }
+                            doAfterAddingProf();
                         });
                     })
-                }).then(doAfterAddingProf);
+                });
                 
             }
             else{
                 doAfterAddingProf();
             }
-            
-            let doAfterAddingProf = () =>{
-                // find the document
-                Instructor.findOne({name: req.body.instructor, school: req.params.university_id})
-                .exec((err, doc)=>{
-                    if(err){next(err);}
-                    
-                    console.log("Review here:")
-            
-        
-                    // Add course review
-                    let review = new Review({
-                        course: req.params.course_id,
-                        quality: req.body.quality,
-                        difficulty: req.body.difficulty,
-                        tags: req.body.tags, // not sure about this one
-                        comments: req.body.comments,
-                        instructor: doc._id,
-                    })
-                    
-                    Course.findById(req.params.course_id, 'url', (err, doc)=>{
-                        // find a course and redirect to its page
-                        if(err){
-                            return next(err);
-                        }
 
-                        review.save((err) => {
-                            if(err){
-                                next(err);
-                            }
-                            res.redirect(doc.url);
-                        })
 
-                    });
-
-                });
-            }
             
 
         });
