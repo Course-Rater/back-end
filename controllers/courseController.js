@@ -348,7 +348,32 @@ exports.course_delete_post = function(req, res, next) {
 //when we rate a course, we add new instructor to the course, so course_update
 // Display course update form on GET.
 exports.course_update_get = function(req, res) {
-    res.send('NOT IMPLEMENTED: course update GET');
+    async.parallel({
+        course: function(callback) {
+            Course.findById(req.params.course_id)
+              .populate('instructors')
+              .populate('school')
+              .exec(callback);
+        },
+        reviews: function(callback){
+            Review.find({course: req.params.course_id})
+                .populate('course')
+                .populate('instructor')
+                .exec(callback);
+        },
+        university: function(callback){
+            University.findById(req.params.university_id)
+            .exec(callback);
+        }
+    }, function (err, results){
+        if(err){ return next(err);}
+        if(results.course == null){
+            var err = new Error('Course not found');
+            err.status = 404;
+            return next(err);
+        }
+        res.render('course_form', {title: 'Update Course', course: results.course, university: results.university});
+    });
 };
 
 // Handle course update on POST.
