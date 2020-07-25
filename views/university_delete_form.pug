@@ -1,0 +1,13 @@
+extends layout
+
+block content
+  h1= title 
+
+  form(method='post', action='')
+    |Name: 
+    input(type='text' readonly value=university.title)
+    br
+    |Country:
+    input(type='text' readonly value=university.country)
+    br
+    input(type='submit' value='Delete')

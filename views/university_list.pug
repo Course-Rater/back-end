@@ -7,4 +7,8 @@ block content
   for uni in university_list
     li #{uni.title}
     li #{uni.country}
-    a(href=uni.url) Link
+    a(href=uni.url) Link 
+    a(href=(uni.url + "/delete")) Delete
+  p
+    a(href="/universities/create") Add University
+
