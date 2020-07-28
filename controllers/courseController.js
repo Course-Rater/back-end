@@ -247,7 +247,7 @@ exports.course_create_post = [
     // },
    
     // Validate fields.
-    body('title', 'Title must not be empty.').trim().isLength({ min: 1 }).isAlphanumeric({no_symbols: true}),
+    body('title', 'Title must not be empty.').trim().isLength({ min: 1 }),
     body('requirements', 'Title must not be empty.').trim(),
 
     // Sanitize fields.
@@ -259,15 +259,19 @@ exports.course_create_post = [
 
         // Extract the validation errors from a request.
         const errors = validationResult(req);
-        //separate with ,
+        // separate by ,
         let requirements_arr = req.body.requirements.split(',');
 
         // Create a Book object with escaped/trimmed data and old id.
         var course = new Course(
           { title: req.body.title,
+            school: req.params.university_id,
+            instructors: [],
             requirements: requirements_arr,
-            school: req.params.university_id
-           });
+
+          });
+
+        console.log("Created a course object: " + course);
 
         if (!errors.isEmpty()) {
             // There are errors. Render form again with sanitized values/error messages            
@@ -275,8 +279,10 @@ exports.course_create_post = [
             return;
         }
         else {
+            console.log("Before saving this shit")
             // Data from form is valid. Update the record.
-            course.save(function (err) {
+            course.save(err => {
+                console.log("After Saving this shit")
                 if (err) { return next(err); }
                    // Successful - redirect to book detail page.
                    res.redirect(course.url);

@@ -3,27 +3,23 @@ extends layout
 block content
     h1=title
 
-    form(method='POST' action='/')
+    form(method='POST' action='')
         p
             input(type='text' placeholder='Course name' name='title' required='true' value=(undefined===course ? '' : course.title))
         p  
-           //input(type='text' name='requirements' placeholder='Add requirements separated with comma' value=(undefined===course ? '' : course.requirements))
-           -if(course.requirements.length > 0){
-                ul
-                for req in course.requirements
-                    li
-                    input(type='text' value=req)   
-           -}
+            input(type='text' name='requirements' placeholder='Add requirements separated with comma' value=(undefined===course ? '' : course.requirements))
+           
+
         p  
-            -if(course===undefined){
+            if course===undefined
                 input(type='hidden' name='school' value=university)
-            -}else{
+            else
                 input(type='text' name='school' value=university.title)
-            -}
+            
         input(type='submit') 
 
-    -if (errors){
+    if errors
         ul
         for error in errors
             li!= error.msg
-    -}
+    
