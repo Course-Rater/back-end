@@ -10,8 +10,23 @@ block content
   
 
   h1 Courses of this instructor:
-  for course in instructor_courses
-    h3 #{course.title}
-    li Requirements: #{course.requirements}
-    hr
+  if courses
+    for course in courses
+      h3 #{course.title}
+      li Requirements: #{course.requirements}
+      hr
 
+  h1 Reviews:
+  if reviews
+    for review in reviews 
+      h4 For course: #{review.course.title}
+      h4 Quality: #{review.quality}
+      h4 Difficulty: #{review.difficulty}
+      ul  
+        for tag in review.tags  
+          li #{tag}
+      p #{review.comments}
+      span #{review.date_added}
+      h4 Likes: #{review.likes}
+      h4 Disikes: #{review.dislikes} 
+      hr

@@ -19,10 +19,10 @@ exports.course_rate_get = function(req, res) {
     .exec((err, course) => {
       if (err) { return next(err); }
       if (course==null) { // No results.
-          var err = new Error('Course not found');
-          err.status = 404;
-          return next(err);
-        }
+        var err = new Error('Course not found');
+        err.status = 404;
+        return next(err);
+      }
 
       // Successful, so send course object
       res.render('course_rate', { title: "Rate a Course",  course:  course});
@@ -161,11 +161,8 @@ exports.course_rate_post = [
             }
 
         });
-        
-        
-            
+   
         }
-        
 ]
 
 
@@ -230,9 +227,7 @@ exports.course_detail = function(req, res, next) {
 
 // Display course create form on GET.
 exports.course_create_get = function(req, res, next) {
-    
     res.render('course_form', { title: 'Create Course', university: req.params.university_id});
-    
 };
 
 // // Handle course create on POST.

@@ -1,9 +1,11 @@
 let Instructor = require('../models/instructor');
 let Course = require('../models/course');
 let University = require('../models/university');
+let Review =  require('../models/review');
+
 // const { body,validationResult } = require('express-validator');
 // const { sanitizeBody } = require('express-validator');
-let async = require('async');
+const async = require('async');
 
 // Display list page for instructors in a specific university.
 exports.instructor_list = function(req, res, next) {
@@ -21,17 +23,21 @@ exports.instructor_list = function(req, res, next) {
 // Display detail page for a specific instructor.
 exports.instructor_detail = function(req, res, next) {
     async.parallel({
-        instructor: function(callback) {
+        instructor: (callback) => {
             Instructor.findById(req.params.instructor_id)
             .populate('school')
             .exec(callback)
         },
-        courses: function(callback){
+        courses: (callback) => {
             Course.find({instructors: req.params.instructor_id})
-            .populate('course')
             .exec(callback)
-        }
+        },
 
+        reviews: (callback) => { 
+            Review.find({instructor: req.params.instructor_id})
+            .populate('course')
+            .exec(callback);
+        }
 
     }, function(err, results) {
         if (err) { return next(err); } // Error in API usage.
@@ -42,7 +48,7 @@ exports.instructor_detail = function(req, res, next) {
         }
         // Successful, so render.
         res.render('instructor_detail', { title: 'Instructor Detail', instructor: results.instructor,
-    instructor_courses: results.courses});
+    courses: results.courses, reviews: results.reviews });
     });
 };
 

@@ -6,11 +6,14 @@ block content
   p Country: #{university.country}
   
   h3 Courses in this uni
-  for course in university_courses
+  for course in courses
     li Title: #{course.title}
     a(href=course.url) Link
 
   h3 Instructors in this uni  
-  for instructor in university_instructors
+  for instructor in instructors
     li Name: #{instructor.name}
     a(href=instructor.url) Link
+
+  a(href=university.url + "/courses/create") Create Course
+

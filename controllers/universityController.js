@@ -4,7 +4,7 @@ var Instructor = require('../models/instructor');
 var async = require('async');
 
 const validator = require('express-validator');
-const { sanitizeBody } = require('express-validator');
+// const { sanitizeBody } = require('express-validator');
 
 // Display list page for university in a specific university.
 exports.university_list = function(req, res) {
@@ -27,12 +27,12 @@ exports.university_detail = function(req, res, next) {
             University.findById(req.params.university_id)
             .exec(callback)
         },
-        university_courses: function(callback){
-            Course.find({'school': req.params.university_id})
+        courses: function(callback){
+            Course.find({school: req.params.university_id})
             .exec(callback)
         },
-        university_instructors: function(callback){
-            Instructor.find({'school': req.params.university_id})
+        instructors: function(callback){
+            Instructor.find({school: req.params.university_id})
             .exec(callback)
         }
     },function(err, results){
@@ -45,7 +45,7 @@ exports.university_detail = function(req, res, next) {
 
 
         res.render('university_detail', {title: 'University Detail', university: results.university,
-        university_courses: results.university_courses, university_instructors: results.university_instructors});
+        courses: results.courses, instructors: results.instructors});
     });
 };
 
