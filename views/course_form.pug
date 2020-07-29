@@ -2,12 +2,14 @@ extends layout
 
 block content
     h1=title
+    if course
+        h2=course.school.title
 
     form(method='POST' action='')
         p
             input(type='text' placeholder='Course name' name='title' required='true' value=(undefined===course ? '' : course.title))
         p  
-            input(type='text' name='requirements' placeholder='Add requirements separated with comma' value=(undefined===course ? '' : course.requirements))
+            input(type='text' name='requirements' placeholder='Add requirements separated with comma' value=(undefined===course ? '' : course.requirements.map(a => " " + a)))
            
             
         input(type='submit') 
@@ -15,5 +17,5 @@ block content
     if errors
         ul
         for error in errors
-            li!= error.msg
+            li= error.msg
     

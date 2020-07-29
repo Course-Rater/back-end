@@ -8,7 +8,6 @@ const { body, validationResult } = require('express-validator');
 const course = require('../models/course');
 
 
-
 // Display the rating page for a course in a specific university.
 exports.course_rate_get = function(req, res) {
 
@@ -45,7 +44,6 @@ exports.course_rate_post = [
 
     // Convert the tags to an array
     (req, res, next) => {
-        
         if(!Array.isArray(req.body.tags)){
             if(typeof req.body.tags==='undefined')
             req.body.tags=[];
@@ -279,10 +277,8 @@ exports.course_create_post = [
             return;
         }
         else {
-            console.log("Before saving this shit")
             // Data from form is valid. Update the record.
             course.save(err => {
-                console.log("After Saving this shit")
                 if (err) { return next(err); }
                    // Successful - redirect to book detail page.
                    res.redirect(course.url);
@@ -316,13 +312,13 @@ exports.course_delete_get = function(req, res) {
 exports.course_delete_post = function(req, res, next) {
     async.parallel({
         reviews: function(callback){
-            Review.find({course: req.body.cid})
+            Review.find({course: req.body.course_id})
             .populate('instructor')
             .populate('course')
             .exec(callback);
         },
         course: function(callback){
-            Course.findById(req.body.cid)
+            Course.findById(req.body.course_id)
             .populate('instructors')
             .populate('school')
             .exec(callback);
@@ -332,52 +328,89 @@ exports.course_delete_post = function(req, res, next) {
             .exec(callback);
         }
 
-    }, function(err, results){
-        if(err){ next(err); }
+    }, (err, results) => {
+        if(err){ return next(err); }
         if(results.reviews.length){
+            // delete everything related to course first
             res.render('course_delete', { title: 'Delete Course', course: results.course, reviews: results.reviews} );
+            return;
         }
-        else{
-            Course.findByIdAndRemove(req.body.cid)
-            .exec(err => {
-                if(err){ return next(err);}
-                res.redirect(results.university.url)
-            });
-        }
+
+        Course.findByIdAndRemove(req.body.course_id)
+        .exec(err => {
+            if(err){ return next(err);}
+            res.redirect(results.university.url)
+        });
+        
     });
 };
 //when we rate a course, we add new instructor to the course, so course_update
 // Display course update form on GET.
 exports.course_update_get = function(req, res) {
-    async.parallel({
-        course: function(callback) {
-            Course.findById(req.params.course_id)
-              .populate('instructors')
-              .populate('school')
-              .exec(callback);
-        },
-        reviews: function(callback){
-            Review.find({course: req.params.course_id})
-                .populate('course')
-                .populate('instructor')
-                .exec(callback);
-        },
-        university: function(callback){
-            University.findById(req.params.university_id)
-            .exec(callback);
-        }
-    }, function (err, results){
+       
+    Course.findById(req.params.course_id)
+    .populate('school')
+    .exec((err, course) => {
         if(err){ return next(err);}
-        if(results.course == null){
+        if(course == null){
             var err = new Error('Course not found');
             err.status = 404;
             return next(err);
         }
-        res.render('course_form', {title: 'Update Course', course: results.course, university: results.university});
-    });
+        res.render('course_form', {title: 'Update Course', course: course});
+    }
+    );
+    
 };
 
 // Handle course update on POST.
-exports.course_update_post = function(req, res) {
-    res.send('NOT IMPLEMENTED: course update POST');
-};
+exports.course_update_post = [ 
+    // (req, res, next) => {
+    //     res.send('huy');}
+    
+    // Convert the genre to an array
+    // (req, res, next) => {
+    //     if(!(req.body.genre instanceof Array)){
+    //         if(typeof req.body.genre==='undefined')
+    //         req.body.genre=[];
+    //         else
+    //         req.body.genre=new Array(req.body.genre); 
+    //     }
+    //     next();
+    // },
+   
+    // Validate fields.
+    body('title', 'Title must not be empty.').trim().isLength({ min: 1 }),
+    body('requirements', 'Title must not be empty.').trim(),
+
+    // Sanitize fields.
+    body('title').escape(),
+    body('requirements').escape(),
+    
+    // Process request after validation and sanitization.
+    (req, res, next) => {
+
+        // Extract the validation errors from a request.
+        const errors = validationResult(req);
+        // separate by ,
+        let requirements_arr = req.body.requirements.split(',');
+
+        // Create a Book object with escaped/trimmed data and old id.
+        var course = new Course(
+          { title: req.body.title,
+            school: req.params.university_id,
+            instructors: [],
+            requirements: requirements_arr,
+
+          });
+
+        console.log("Created a course object: " + course);
+
+        if (!errors.isEmpty()) {
+            res.render('course_form', {title: 'Update Course', course: course});
+            return;
+        }
+
+        Course.findByIdAndUpdate()
+    }
+];
