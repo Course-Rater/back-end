@@ -396,13 +396,12 @@ exports.course_update_post = [
         let requirements_arr = req.body.requirements.split(',');
 
         // Create a Book object with escaped/trimmed data and old id.
-        var course = new Course(
-          { title: req.body.title,
+        var course = new Course({ 
+            title: req.body.title,
             school: req.params.university_id,
             instructors: [],
             requirements: requirements_arr,
-
-          });
+        });
 
         console.log("Created a course object: " + course);
 
@@ -411,6 +410,11 @@ exports.course_update_post = [
             return;
         }
 
-        Course.findByIdAndUpdate()
+        Course.findByIdAndUpdate(req.params.course_id, course, {},  (err,thecourse) => {
+            if (err) { return next(err); }
+            // Successful - redirect to book detail page.
+            res.redirect(thecourse.url);
+          });
+
     }
 ];
