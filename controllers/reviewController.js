@@ -1,14 +1,11 @@
-let Course = require('../models/course');
 let Review = require('../models/review');
-let University = require('../models/university')
-let Instructor = require('../models/instructor');
-let async = require('async');
+let University = require('../models/university') 
 
 const { body, validationResult } = require('express-validator');
 // const { sanitizeBody } = require('express-validator');
 
 // Display list page for reviews in a specific university.
-exports.review_list = function(req, res) {
+exports.review_list = (req, res) => {
     Review.find({}).populate('course').populate('instructor').sort([['date_added', 'descending']])
     .exec((err, reviews) => {
         if (err) { return next(err); }
