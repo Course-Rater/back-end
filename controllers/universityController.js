@@ -21,7 +21,7 @@ exports.university_list = function(req, res) {
 
 
 // Display detail page for a specific university.
-exports.university_detail = function(req, res, next) {
+exports.university_detail = (req, res, next) => {
     async.parallel({
         university: function(callback){
             University.findById(req.params.university_id)
@@ -51,7 +51,7 @@ exports.university_detail = function(req, res, next) {
 
 // Display university create form on GET.
 //Consider Monster University case
-exports.university_create_get = function(req, res, next) {
+exports.university_create_get = (req, res, next) => {
     res.render('university_form', {title: 'Create university'});
 };
 
@@ -114,17 +114,17 @@ exports.university_create_post = [
   ];
 
 // Display university delete form on GET.
-exports.university_delete_get = function(req, res, next) {
+exports.university_delete_get = (req, res, next) => {
   async.parallel({
-    university: function(callback){
+    university: (callback) => {
       University.findById(req.params.university_id)
       .exec(callback)
     },
-    instructors: function(callback) {
+    instructors: (callback) => {
       Instructor.find({'school': req.params.university_id})
       .exec(callback)
     },
-    courses: function(callback){
+    courses: (callback) => {
       Course.find({'course': req.params.university_id})
       .exec(callback)
     }
@@ -147,7 +147,7 @@ exports.university_delete_get = function(req, res, next) {
 };
 
 // Handle university delete on POST.
-exports.university_delete_post = function(req, res, next) {
+exports.university_delete_post = (req, res, next) => {
     University.findByIdAndRemove(req.params.university_id, (err) => {
       if(err){ return next(err); }
       res.redirect('/universities');
@@ -155,7 +155,7 @@ exports.university_delete_post = function(req, res, next) {
 };
 
 // Display university update form on GET.
-exports.university_update_get = function(req, res) {
+exports.university_update_get = (req, res) => {
     res.render('university_form', {title: 'Update university'});
 };
 

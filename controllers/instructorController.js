@@ -124,7 +124,7 @@ exports.instructor_update_post = (req, res) => {
             // There are errors. Render form again with sanitized values/error messages.
             University.find({}).exec((err, universities) => {
                 if(err){next(err)}
-                res.render('instructor_form', {title: 'Update instructor', instructor: results.instructor, universities: universities, errors: errors.array()});
+                res.render('instructor_form', {title: 'Update instructor', instructor: instructor, universities: universities, errors: errors.array()});
 
             })
     
