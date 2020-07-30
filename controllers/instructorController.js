@@ -8,7 +8,7 @@ let Review =  require('../models/review');
 const async = require('async');
 
 // Display list page for instructors in a specific university.
-exports.instructor_list = function(req, res, next) {
+exports.instructor_list = (req, res, next) => {
     Instructor.find({})
       .populate('school')
       .sort([['name', 'ascending']])
@@ -21,7 +21,7 @@ exports.instructor_list = function(req, res, next) {
 
 
 // Display detail page for a specific instructor.
-exports.instructor_detail = function(req, res, next) {
+exports.instructor_detail = (req, res, next) => {
     async.parallel({
         instructor: (callback) => {
             Instructor.findById(req.params.instructor_id)
