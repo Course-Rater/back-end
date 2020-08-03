@@ -1,0 +1,16 @@
+extends layout
+
+block content
+    h1= title
+
+    form(action="" method="POST")
+        p
+            label(for="email") Email: 
+            input(type="email" name="email" required)
+        p
+            label(for="password") Password: 
+            input(type="password" name="password" required)
+
+        input(type="submit")
+    p
+        a(href="./register") Sign up for an account
