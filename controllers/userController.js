@@ -30,7 +30,7 @@ exports.user_register_post = [
     body('fullname', 'Full name is required').trim().isLength({min: 1, max: 130}).isAlpha().escape(),
     //check if passwords match
     body('password', 'Password is required')
-        .isLength({min: 6})
+        .isLength({min: 3})
         .custom((value, { req }) => {
             if (value !== req.body.password2) {
                 // trow error if passwords do not match
@@ -41,17 +41,20 @@ exports.user_register_post = [
         })
     //validator.body('password', 'Password is required').trim().isLength({min: 1}),
     ], (req, res, next) => {
-        const errors = validator.validationResult(req);
-
+        const errors = validationResult(req);
+       
         var user = new User({
             email: req.body.email,
             fullname: req.body.fullname,
             password: req.body.password            
         });
-
+        
         if(!errors.isEmpty()){
             res.render('register', {title: "Register", errors: errors.array()});
+            return;
         }
+        res.render('register', {title: "Register", errors: errors.array()});
+
     //res.render('login', {title: "Login"});
     }
    //res.render('register', {title: "Register"}) 
