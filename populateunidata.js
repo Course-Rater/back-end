@@ -13,6 +13,7 @@ var UniversityData = require('./models/university_data')
 var fs = require('fs');
 
 var mongoose = require('mongoose');
+const university = require('./models/university');
 //const university_data = require('./models/university_data');
 var mongoDB = userArgs[0];
 mongoose.connect(mongoDB, { useNewUrlParser: true });
@@ -32,6 +33,7 @@ fs.readFile('./world_universities_and_domains.json', 'utf8', (err, jsonString) =
     const university_data = JSON.parse(jsonString);
     
     for(const datum of university_data){
+        //console.log(datum);
         UniversityDataCreate(datum);
     }
 
