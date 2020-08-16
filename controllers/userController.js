@@ -15,8 +15,8 @@ exports.user_register_get = (req, res, next) => {
 
 
 exports.user_login_post = passport.authenticate('local', { 
-    successRedirect: '/universities',
-    failureRedirect: '/',
+    successRedirect: '/',
+    failureRedirect: '/login',
     failureFlash: true 
 });
 

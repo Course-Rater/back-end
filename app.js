@@ -3,6 +3,14 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+const dotenv = require('dotenv');
+const result = dotenv.config()
+
+if (result.error) {
+  throw result.error
+}
+
+console.log(result.parsed)
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -15,7 +23,7 @@ var session = require('express-session');
 
 //Set up mongoose connection
 var mongoose = require('mongoose');
-var mongoDB = 'mongodb+srv://admin:admin@cluster0.iyp6b.mongodb.net/cluster1?retryWrites=true&w=majority';
+var mongoDB = process.env.MONGO_DB_LINK;
 
 // Set up authentication
 let passport = require('passport'), 
@@ -66,20 +74,9 @@ passport.use(new LocalStrategy(
     });
   }
 ));
+ 
 
-
-app.set('trust proxy', 1) // trust first proxy
-app.use(session({
-  secret: 'keyboard cat',
-  resave: false,
-  saveUninitialized: true,
-  cookie: { secure: true }
-}));
-// app.use(session({ secret: "cats" }));
-
-
-app.use(passport.initialize());
-app.use(passport.session());
+app.use(session({ secret: process.env.SESSION_KEY}));
 
 
 passport.serializeUser(function(user, done) {
@@ -91,6 +88,9 @@ passport.deserializeUser(function(id, done) {
     done(err, user);
   });
 });
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 
 app.use('/', indexRouter);

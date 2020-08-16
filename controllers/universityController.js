@@ -3,7 +3,7 @@ var Course = require('../models/course');
 var Instructor = require('../models/instructor');
 var async = require('async');
 
-const validator = require('express-validator');
+const { body,validationResult } = require('express-validator');
 // const { sanitizeBody } = require('express-validator');
 
 // Display list page for university in a specific university.
@@ -59,22 +59,22 @@ exports.university_create_get = (req, res, next) => {
 exports.university_create_post = [
    
     // Validate that the name field is not empty.
-    validator.body('title', 'University name required').trim().isLength({ min: 1 }),
+    body('title', 'University name required').trim().isLength({ min: 1 }),
     
     // Sanitize (escape) the name field.
-    validator.sanitizeBody('title').escape(),
+    body('title').escape(),
 
     // Validate that the name field is not empty.
-    validator.body('country', 'Country required').trim().isLength({ min: 1 }),
+    body('country', 'Country required').trim().isLength({ min: 1 }),
     
     // Sanitize (escape) the name field.
-    validator.sanitizeBody('country').escape(),
+    body('country').escape(),
   
     // Process request after validation and sanitization.
     (req, res, next) => {
   
       // Extract the validation errors from a request.
-      const errors = validator.validationResult(req);
+      const errors = validationResult(req);
   
       // Create a genre object with escaped and trimmed data.
       var university = new University(
@@ -163,22 +163,22 @@ exports.university_update_get = (req, res) => {
 exports.university_update_post = [
    
   // Validate that the name field is not empty.
-  validator.body('title', 'University name required').trim().isLength({ min: 1 }),
+  body('title', 'University name required').trim().isLength({ min: 1 }),
   
   // Sanitize (escape) the name field.
-  validator.sanitizeBody('title').escape(),
+  body('title').escape(),
 
   // Validate that the name field is not empty.
-  validator.body('country', 'Country required').trim().isLength({ min: 1 }),
+  body('country', 'Country required').trim().isLength({ min: 1 }),
   
   // Sanitize (escape) the name field.
-  validator.sanitizeBody('country').escape(),
+  body('country').escape(),
 
   // Process request after validation and sanitization.
   (req, res, next) => {
 
     // Extract the validation errors from a request.
-    const errors = validator.validationResult(req);
+    const errors = validationResult(req);
 
     // Create a genre object with escaped and trimmed data.
     var university = new University(

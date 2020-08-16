@@ -3,8 +3,8 @@ let Course = require('../models/course');
 let University = require('../models/university');
 let Review =  require('../models/review');
 
-// const { body,validationResult } = require('express-validator');
-const validator = require('express-validator');
+const { body,validationResult } = require('express-validator');
+// const validator = require('express-validator');
 const async = require('async');
 
 // Display list page for instructors in a specific university.
@@ -100,11 +100,11 @@ exports.instructor_update_get = (req, res) => {
 exports.instructor_update_post = (req, res) => {
 
     // Validate fields.
-    validator.body('name', 'Name should be specified').trim().isLength({ min: 1, max: 150 }).isAlpha({no_symbols: true}),
-    validator.body('school', 'School must be specified').trim(),
+    body('name', 'Name should be specified').trim().isLength({ min: 1, max: 150 }).isAlpha({no_symbols: true}),
+    body('school', 'School must be specified').trim(),
 
     // Sanitize fields.
-    validator.body('*').escape(),
+    body('*').escape(),
 
     // Process request after validation and sanitization.
     (req, res, next) => {
