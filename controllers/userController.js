@@ -1,10 +1,24 @@
 let User = require('../models/user');
+const bcrypt = require('bcryptjs');
 const {body, validationResult, check} = require('express-validator');
-const bcrypt = require('bcrypt');
+let passport = require('passport');
 
- 
 
- 
+exports.user_login_get = (req, res, next) => {
+    res.render('login', {title: "Login"});
+}
+
+exports.user_register_get = (req, res, next) => {
+    res.render('register', {title: "Register"});
+}
+
+
+
+exports.user_login_post = passport.authenticate('local', { 
+    successRedirect: '/universities',
+    failureRedirect: '/',
+    failureFlash: true 
+});
 
 
 
@@ -14,7 +28,7 @@ exports.user_register_post = [
 
     //check if passwords match
     body('password', 'Password is required')
-        .isLength({min: 3})
+        .isLength({min: 8})
         .custom((value, { req }) => {
             if (value != req.body.password2) {
                 // trow error if passwords do not match
@@ -23,7 +37,7 @@ exports.user_register_post = [
                 return true;
             }
     }),
-    
+
     (req, res, next) => {
         const errors = validationResult(req);
         if(!errors.isEmpty()){
@@ -40,18 +54,17 @@ exports.user_register_post = [
                 email: req.body.email,
                 username: req.body.username,
                 password: hashedPassword
-              }).save(err => {
+                }).save(err => {
                 if (err) { 
-                  return next(err);
+
+                    return next(err);
                 };
+                console.log("Registration of a new user!")
                 res.redirect("/");
-              });
-     
-          });
-
-
+                });
         
-        
+            });
     }
-    ]
-   //res.render('register', {title: "Register"}) 
+
+]
+//res.render('register', {title: "Register"}) 

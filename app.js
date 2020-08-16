@@ -40,18 +40,29 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+let User = require('./models/user');
+const bcrypt = require('bcryptjs');
 
 passport.use(new LocalStrategy(
   function(username, password, done) {
     User.findOne({ username: username }, function (err, user) {
       if (err) { return done(err); }
       if (!user) {
+        console.log("Incorrect username");
         return done(null, false, { message: 'Incorrect username.' });
       }
-      if (!user.validPassword(password)) {
-        return done(null, false, { message: 'Incorrect password.' });
-      }
-      return done(null, user);
+      console.log("User found");
+      bcrypt.compare(password, user.password, (err, res) => {
+        if (res) {
+          console.log("Passwords match");
+          // passwords match! log user in
+          return done(null, user)
+        } else {
+          console.log("Passwords don't match");
+          // passwords do not match!
+          return done(null, false, {msg: "Incorrect password"})
+        }
+      })
     });
   }
 ));
@@ -64,15 +75,29 @@ app.use(session({
   saveUninitialized: true,
   cookie: { secure: true }
 }));
+// app.use(session({ secret: "cats" }));
+
 
 app.use(passport.initialize());
 app.use(passport.session());
 
 
+passport.serializeUser(function(user, done) {
+  done(null, user.id);
+});
+
+passport.deserializeUser(function(id, done) {
+  User.findById(id, function(err, user) {
+    done(err, user);
+  });
+});
+
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/universities', universityRouter);
+
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
