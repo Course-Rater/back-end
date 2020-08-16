@@ -2,53 +2,9 @@ let User = require('../models/user');
 const {body, validationResult, check} = require('express-validator');
 const bcrypt = require('bcrypt');
 
-let passport = require('passport'), 
-LocalStrategy = require('passport-local').Strategy;
+ 
 
-
-passport.use(new LocalStrategy(
-  (username, password, done) => {
-    User.findOne({ username: username }, (err, user) => {
-      if (err) { return done(err); }
-      if (!user) {
-        return done(null, false, { message: 'Incorrect username.' });
-      }
-      if (await bcrypt.compare(password, user.password)) { // change to encrypted shit
-        return done(null, false, { message: 'Incorrect password.' });
-      }
-      return done(null, user);
-    });
-  }
-));
-
-
-passport.serializeUser((user, done) => {
-    done(null, user.id);
-});
-
-passport.deserializeUser((id, done) => {
-    User.findById(id, function(err, user) {
-        done(err, user);
-    });
-});
-
-
-
-exports.user_login_get = (req, res, next) => {
-    res.render('login', {title: "Login"});
-}
-
-exports.user_register_get = (req, res, next) => {
-    res.render('register', {title: "Register"});
-}
-
-
-
-exports.user_login_post = passport.authenticate('local', { 
-    successRedirect: '/',
-    failureRedirect: '/login',
-    failureFlash: true 
-});
+ 
 
 
 

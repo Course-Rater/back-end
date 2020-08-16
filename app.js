@@ -10,29 +10,29 @@ var universityRouter = require('./routes/university');
 
 var app = express();
 
+var session = require('express-session');
+
+
 //Set up mongoose connection
 var mongoose = require('mongoose');
-
 var mongoDB = 'mongodb+srv://admin:admin@cluster0.iyp6b.mongodb.net/cluster1?retryWrites=true&w=majority';
+
+// Set up authentication
+let passport = require('passport'), 
+LocalStrategy = require('passport-local').Strategy;
+
+
+
 mongoose.connect(mongoDB, {useUnifiedTopology: true, useNewUrlParser: true }); 
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
-
-
-
-// Passport 
-let passport = require('passport'), 
-LocalStrategy = require('passport-local').Strategy;
-const bcrypt = require('bcrypt');
-let User = require('../models/user');
 
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
-const bodyParser = require("body-parser")
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true })); // express now includes it in standard package
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -41,22 +41,14 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 
-
-
-app.use('/', indexRouter);
-// app.use('/users', usersRouter);
-app.use('/universities', universityRouter);
-
-
-// Login routers
 passport.use(new LocalStrategy(
-  (username, password, done) => {
-    User.findOne({ username: username }, (err, user) => {
+  function(username, password, done) {
+    User.findOne({ username: username }, function (err, user) {
       if (err) { return done(err); }
       if (!user) {
         return done(null, false, { message: 'Incorrect username.' });
       }
-      if (await bcrypt.compare(password, user.password)) { // change to encrypted shit
+      if (!user.validPassword(password)) {
         return done(null, false, { message: 'Incorrect password.' });
       }
       return done(null, user);
@@ -65,84 +57,22 @@ passport.use(new LocalStrategy(
 ));
 
 
-passport.serializeUser((user, done) => {
-    done(null, user.id);
-});
-
-passport.deserializeUser((id, done) => {
-    User.findById(id, function(err, user) {
-        done(err, user);
-    });
-});
-
+app.set('trust proxy', 1) // trust first proxy
+app.use(session({
+  secret: 'keyboard cat',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: true }
+}));
 
 app.use(passport.initialize());
+app.use(passport.session());
 
 
 
-user_login_get = (req, res, next) => {
-  res.render('login', {title: "Login"});
-}
-
-user_register_get = (req, res, next) => {
-  res.render('register', {title: "Register"});
-}
-
-
-
-user_login_post = passport.authenticate('local', { 
-  successRedirect: '/',
-  failureRedirect: '/login',
-  failureFlash: true 
-});
-
-
-
-user_register_post = [
-  body('email', 'Email is required').trim().isEmail().normalizeEmail(),
-  body('username', 'Username is required').trim().isLength({min: 1, max: 130}).isAlpha().escape(),
-
-  //check if passwords match
-  body('password', 'Password is required')
-      .isLength({min: 3})
-      .custom((value, { req }) => {
-          if (value != req.body.password2) {
-              // trow error if passwords do not match
-              throw new Error("Passwords don't match");
-          } else {
-              return true;
-          }
-  }),
-  
-  (req, res, next) => {
-      const errors = validationResult(req);
-      if(!errors.isEmpty()){
-          res.render('register', {title: "Register", errors: errors.array()});
-          return;
-      }
-
-      // hash the passwords
-      bcrypt.hash(req.body.password, 10, (err, hashedPassword) => {
-          // if err, do something
-          if(err) return next(err);
-          // otherwise, store hashedPassword in DB
-          const user = new User({
-              email: req.body.email,
-              username: req.body.username,
-              password: hashedPassword
-            }).save(err => {
-              if (err) { 
-                return next(err);
-              };
-              res.redirect("/");
-            });
-   
-        });
-      
-  }
-  ]
-
-
+app.use('/', indexRouter);
+app.use('/users', usersRouter);
+app.use('/universities', universityRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
