@@ -15,21 +15,24 @@ block content
   h3 Reviews:
   if reviews 
     each review in reviews
-      |Quality: #{review.quality} Difficulty: #{review.difficulty}
+      form(action=course.url + "/like", method="post")
+        input(type='hidden' name='reviewid' value=review._id)
+        |Quality: #{review.quality} Difficulty: #{review.difficulty}
 
-      -if(review.comments == null){ review.comments = 'None'}
+        -if(review.comments == null){ review.comments = 'None'}
 
-      p Comments: #{review.comments} 
+        p Comments: #{review.comments} 
 
-      p Tags:
-      each tag in review.tags
-        li
-          | #{tag}  
-          
+        p Tags:
+        each tag in review.tags
+          li
+            | #{tag}  
+        p
+          button(type="submit") Like
+          button(type="submit" formaction=course.url + "/dislike") Dislike
+        p Likes: #{review.likes} Dislikes: #{review.dislikes}
 
-      p Likes: #{review.likes} Dislikes: #{review.dislikes}
-
-      p Instructor: #{review.instructor.name}
+        p Instructor: #{review.instructor.name}
 
       hr
   a(href=course.url + '/rate') Rate the course 

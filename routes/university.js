@@ -4,6 +4,7 @@ var router = express.Router();
 let course_controller = require('../controllers/courseController');
 let instructor_controller = require('../controllers/instructorController');
 let university_controller = require('../controllers/universityController');
+let review_controller = require('../controllers/reviewController');
 
 
 // ADDING A NEW REVIEW
@@ -28,6 +29,11 @@ router.post('/:university_id/courses/:course_id/update', course_controller.cours
 router.get('/:university_id/courses/:course_id', course_controller.course_detail);
 
 router.get('/:university_id/courses', course_controller.course_list);
+
+/// REVIEW ROUTES ///
+router.post('/:university_id/courses/:course_id/like', review_controller.review_like);
+
+router.post('/:university_id/courses/:course_id/dislike', review_controller.review_dislike);
 
 
 
