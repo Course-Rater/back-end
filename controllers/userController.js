@@ -2,6 +2,7 @@ let User = require('../models/user');
 const bcrypt = require('bcryptjs');
 const {body, validationResult, check} = require('express-validator');
 let passport = require('passport');
+let async = require('async');
 
 
 exports.user_login_get = (req, res, next) => {
@@ -22,20 +23,7 @@ exports.user_login_post = passport.authenticate('local', {
 
 
 exports.user_register_post = [
-    body('email', 'Email is required').trim().isEmail().normalizeEmail()
-        .custom((value, { req }) => {
-            var userFound = false;
-            User.findOne( { email: value },  (err, user) => {
-                if(err) { return next(err); }
-                console.log(user);
-                if(user){
-                    console.log("call");
-                    throw new Error("User already exists");
-                }
-                
-            });
-            
-        }),
+    body('email', 'Email is required').trim().isEmail().normalizeEmail(),
     body('username', 'Username is required').trim().isLength({min: 1, max: 130}).isAlpha().escape(),
 
     //check if passwords match
@@ -56,25 +44,41 @@ exports.user_register_post = [
             res.render('register', {title: "Register", errors: errors.array()});
             return;
         }
-        // hash the passwords
-        bcrypt.hash(req.body.password, 10, (err, hashedPassword) => {
-            // if err, do something
-            if(err) return next(err);
-            // otherwise, store hashedPassword in DB
-            const user = new User({
-                email: req.body.email,
-                username: req.body.username,
-                password: hashedPassword
-                }).save(err => {
-                if (err) { 
 
-                    return next(err);
-                };
-                console.log("Registration of a new user!")
-                res.redirect("/");
+        User.findOne( { email: req.body.email },  (err, user) => {
+            if(err) { return next(err); }
+            console.log(user);
+            if(user){
+                let errors = [];
+                let error = {msg: "Username already exists"};
+                console.log(error);
+                errors.push(error);
+                console.log(errors);
+                res.render('register', {title: "Register", errors: errors});
+                return;
+            }
+            bcrypt.hash(req.body.password, 10, (err, hashedPassword) => {
+                // if err, do something
+                if(err) return next(err);
+                // otherwise, store hashedPassword in DB
+                const user = new User({
+                    email: req.body.email,
+                    username: req.body.username,
+                    password: hashedPassword
+                    }).save(err => {
+                    if (err) { 
+    
+                        return next(err);
+                    };
+                    console.log("Registration of a new user!")
+                    res.redirect("/");
+                    });
+            
                 });
-        
-            });
+            
+        });
+        // hash the passwords
+       
     }
 
 ]
