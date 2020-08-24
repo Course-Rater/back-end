@@ -13,7 +13,6 @@ exports.user_register_get = (req, res, next) => {
 }
 
 
-
 exports.user_login_post = passport.authenticate('local', { 
     successRedirect: '/',
     failureRedirect: '/login',
@@ -23,7 +22,20 @@ exports.user_login_post = passport.authenticate('local', {
 
 
 exports.user_register_post = [
-    body('email', 'Email is required').trim().isEmail().normalizeEmail(),
+    body('email', 'Email is required').trim().isEmail().normalizeEmail()
+        .custom((value, { req }) => {
+            var userFound = false;
+            User.findOne( { email: value },  (err, user) => {
+                if(err) { return next(err); }
+                console.log(user);
+                if(user){
+                    console.log("call");
+                    throw new Error("User already exists");
+                }
+                
+            });
+            
+        }),
     body('username', 'Username is required').trim().isLength({min: 1, max: 130}).isAlpha().escape(),
 
     //check if passwords match
@@ -44,7 +56,6 @@ exports.user_register_post = [
             res.render('register', {title: "Register", errors: errors.array()});
             return;
         }
-
         // hash the passwords
         bcrypt.hash(req.body.password, 10, (err, hashedPassword) => {
             // if err, do something
